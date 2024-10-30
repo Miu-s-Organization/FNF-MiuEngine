@@ -1750,7 +1750,7 @@ class PlayState extends MusicBeatState
 				if (ClientPrefs.data.recycleNote) {
 					spawnedNote = notes.recycle(Note);
 					dunceNote.spawned = true;
-					spawnedNote.setupNoteSpawn(dunceNote);
+					spawnedNote.setupNoteData(dunceNote);
 				} else {
 					notes.insert(0, dunceNote);
 					dunceNote.spawned = true;
