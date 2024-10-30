@@ -247,7 +247,7 @@ class PlayState extends MusicBeatState
 	public var startCallback:Void->Void = null;
 	public var endCallback:Void->Void = null;
 
-	public var spawnedNote:Note = new Note(); // FlxTypedGroup recycle function.
+	public var spawnedNote:Note/* = new Note()*/; // FlxTypedGroup recycle function.
 	
 	public static var nextReloadAll:Bool = false;
 	override public function create()
@@ -2563,6 +2563,7 @@ class PlayState extends MusicBeatState
 			antialias = !isPixelStage;
 		}
 
+		if (!cpuControlled) {
 		rating.loadGraphic(Paths.image(uiPrefix + daRating.image + uiPostfix));
 		rating.screenCenter();
 		rating.x = placement - 40;
@@ -2606,7 +2607,7 @@ class PlayState extends MusicBeatState
 		var xThing:Float = 0;
 		if (showCombo)
 			comboGroup.add(comboSpr);
-
+		
 		var separatedScore:String = Std.string(combo).lpad('0', 3);
 		for (i in 0...separatedScore.length)
 		{
@@ -2653,6 +2654,7 @@ class PlayState extends MusicBeatState
 			},
 			startDelay: Conductor.crochet * 0.002 / playbackRate
 		});
+		}
 	}
 
 	public var strumsBlocked:Array<Bool> = [];
