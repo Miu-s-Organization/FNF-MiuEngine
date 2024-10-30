@@ -247,6 +247,8 @@ class PlayState extends MusicBeatState
 	public var startCallback:Void->Void = null;
 	public var endCallback:Void->Void = null;
 
+	public var spawnedNote:Note = new Note(); // FlxTypedGroup recycle function.
+	
 	public static var nextReloadAll:Bool = false;
 	override public function create()
 	{
@@ -1745,8 +1747,14 @@ class PlayState extends MusicBeatState
 			while (unspawnNotes.length > 0 && unspawnNotes[0].strumTime - Conductor.songPosition < time)
 			{
 				var dunceNote:Note = unspawnNotes[0];
-				notes.insert(0, dunceNote);
-				dunceNote.spawned = true;
+				if (ClientPrefs.data.recycleNote) {
+					spawnedNote = notes.recycle(Note);
+					dunceNote.spawned = true;
+					spawnedNote.setupNoteSpawn(dunceNote);
+				} else {
+					notes.insert(0, dunceNote);
+					dunceNote.spawned = true;
+				}
 
 				callOnLuas('onSpawnNote', [notes.members.indexOf(dunceNote), dunceNote.noteData, dunceNote.noteType, dunceNote.isSustainNote, dunceNote.strumTime]);
 				callOnHScript('onSpawnNote', [dunceNote]);
