@@ -167,6 +167,12 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			BOOL);
 		addOption(option);
 
+		var option:Option = new Option('Recycle Note',
+			"W.I.P, but it make game run faster, shoutout to SomeGuyWhoLikesCoding",
+			'recycleNote',
+			BOOL);
+		addOption(option);
+
 		super();
 		add(notes);
 		add(splashes);
