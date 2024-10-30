@@ -559,6 +559,87 @@ class Note extends FlxSprite
 		}
 	}
 
+	public function setupNoteData(chartNoteData:Note) {
+		wasGoodHit = hitByOpponent = tooLate = canBeHit = false; // Don't make an update call of this for the note group
+
+		strumTime = chartNoteData.strumTime;
+		if(!inEditor) strumTime += ClientPrefs.noteOffset;
+		noteData = chartNoteData.noteData % 4;
+		noteType = chartNoteData.noteType;
+		animSuffix = chartNoteData.animSuffix;
+		noAnimation = noMissAnimation = chartNoteData.noAnimation;
+		mustPress = chartNoteData.mustPress;
+		//doOppStuff = chartNoteData.oppNote;
+		gfNote = chartNoteData.gfNote;
+		isSustainNote = chartNoteData.isSustainNote;
+		//isSustainEnd = chartNoteData.isSustainEnd;
+		//sustainScale = chartNoteData.sustainScale;
+		lowPriority = chartNoteData.lowPriority;
+		
+		hitHealth = chartNoteData.hitHealth;
+		missHealth = chartNoteData.missHealth;
+		hitCausesMiss = chartNoteData.hitCausesMiss;
+		ignoreNote = chartNoteData.ignoreNote;
+		blockHit = chartNoteData.blockHit;
+		multSpeed = chartNoteData.multSpeed;
+		//noteDensity = chartNoteData.noteDensity;
+
+		if (noteType == 'Hurt Note')
+		{
+			texture = 'HURTNOTE_assets';
+			noteSplashData.texture = 'noteSplashes/HURTnoteSplashes';
+		}
+
+		if (PlayState.isPixelStage)
+		{
+			@:privateAccess reloadNote(texture);
+			if (isSustainNote) 
+			{
+				//firstOffX = true;
+				offsetX += 30;
+			}
+		}
+
+		if (!PlayState.isPixelStage) 
+		{
+			changeSize = true;
+			setGraphicSize(Std.int(width * 0.7));
+			updateHitbox();
+		}
+
+		if (isSustainNote) {
+			offsetX += width / 2;
+			copyAngle = false;
+			animation.play(colArray[noteData % 4] + (chartNoteData.isSustainEnd ? 'holdend' : 'hold'));
+			updateHitbox();
+			offsetX -= width / 2;
+		}
+		else {
+			animation.play(colArray[noteData % 4] + 'Scroll');
+			if (!copyAngle) copyAngle = true;
+			offsetX = 0; //Juuuust in case we recycle a sustain note to a regular note
+			/*if (useRGBShader && shouldCenterOffsets)
+			{
+				centerOffsets();
+				centerOrigin();
+			}*/
+		}
+		angle = 0;
+
+		clipRect = null;
+		if (!mustPress) 
+		{
+			visible = !ClientPrefs.data.opponentStrums ? false : true;
+			alpha = ClientPrefs.data.middleScroll ? /*ClientPrefs.oppNoteAlpha*/ 1 : 1;
+		}
+		else
+		{
+			if (!visible) visible = true;
+			if (alpha != 1) alpha = 1;
+		}
+		if (flipY) flipY = false;
+	}
+
 	@:noCompletion
 	override function set_clipRect(rect:FlxRect):FlxRect
 	{
