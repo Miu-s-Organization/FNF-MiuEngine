@@ -563,7 +563,7 @@ class Note extends FlxSprite
 		wasGoodHit = hitByOpponent = tooLate = canBeHit = false; // Don't make an update call of this for the note group
 
 		strumTime = chartNoteData.strumTime;
-		if(!inEditor) strumTime += ClientPrefs.noteOffset;
+		if(!inEditor) strumTime += ClientPrefs.data.noteOffset;
 		noteData = chartNoteData.noteData % 4;
 		noteType = chartNoteData.noteType;
 		animSuffix = chartNoteData.animSuffix;
@@ -602,7 +602,7 @@ class Note extends FlxSprite
 
 		if (!PlayState.isPixelStage) 
 		{
-			changeSize = true;
+			//changeSize = true;
 			setGraphicSize(Std.int(width * 0.7));
 			updateHitbox();
 		}
@@ -610,7 +610,7 @@ class Note extends FlxSprite
 		if (isSustainNote) {
 			offsetX += width / 2;
 			copyAngle = false;
-			animation.play(colArray[noteData % 4] + (chartNoteData.isSustainEnd ? 'holdend' : 'hold'));
+			animation.play(colArray[noteData % 4] + 'hold');
 			updateHitbox();
 			offsetX -= width / 2;
 		}
