@@ -560,7 +560,7 @@ class Note extends FlxSprite
 	}
 
 	public function setupNoteData(chartNoteData:Note) {
-		wasGoodHit = hitByOpponent = tooLate = canBeHit = false; // Don't make an update call of this for the note group
+		/*wasGoodHit = hitByOpponent = tooLate = canBeHit = false; // Don't make an update call of this for the note group
 
 		strumTime = chartNoteData.strumTime;
 		if(!inEditor) strumTime += ClientPrefs.data.noteOffset;
@@ -581,63 +581,18 @@ class Note extends FlxSprite
 		hitCausesMiss = chartNoteData.hitCausesMiss;
 		ignoreNote = chartNoteData.ignoreNote;
 		blockHit = chartNoteData.blockHit;
-		multSpeed = chartNoteData.multSpeed;
-		//noteDensity = chartNoteData.noteDensity;
+		multSpeed = chartNoteData.multSpeed;*/
 
-		if (noteType == 'Hurt Note')
-		{
-			texture = 'HURTNOTE_assets';
-			noteSplashData.texture = 'noteSplashes/HURTnoteSplashes';
-		}
-
-		if (PlayState.isPixelStage)
-		{
-			@:privateAccess reloadNote(texture);
-			if (isSustainNote) 
-			{
-				//firstOffX = true;
-				offsetX += 30;
-			}
-		}
-
-		if (!PlayState.isPixelStage) 
-		{
-			//changeSize = true;
-			setGraphicSize(Std.int(width * 0.7));
-			updateHitbox();
-		}
-
-		if (isSustainNote) {
-			offsetX += width / 2;
-			copyAngle = false;
-			animation.play(colArray[noteData % 4] + 'hold');
-			updateHitbox();
-			offsetX -= width / 2;
-		}
-		else {
-			animation.play(colArray[noteData % 4] + 'Scroll');
-			if (!copyAngle) copyAngle = true;
-			offsetX = 0; //Juuuust in case we recycle a sustain note to a regular note
-			/*if (useRGBShader && shouldCenterOffsets)
-			{
-				centerOffsets();
-				centerOrigin();
-			}*/
-		}
-		angle = 0;
-
-		clipRect = null;
-		if (!mustPress) 
-		{
-			visible = !ClientPrefs.data.opponentStrums ? false : true;
-			alpha = ClientPrefs.data.middleScroll ? /*ClientPrefs.oppNoteAlpha*/ 1 : 1;
-		}
-		else
-		{
-			if (!visible) visible = true;
-			if (alpha != 1) alpha = 1;
-		}
-		if (flipY) flipY = false;
+		gfNote = chartNoteData.gfNote;
+		animSuffix = chartNoteData.animSuffix;
+		mustPress = chartNoteData.mustPress;
+		isSustainNote = chartNoteData.isSustainNote;
+		sustainLength = chartNoteData.sustainLength;
+		noteType = chartNoteData.noteType;
+		parent = chartNoteData.parent;
+		prevNote = chartNoteData.prevNote ?? null;
+		nextNote = chartNoteData.nextNote ?? null;
+		scrollFactor.set();
 	}
 
 	@:noCompletion

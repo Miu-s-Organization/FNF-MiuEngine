@@ -247,7 +247,7 @@ class PlayState extends MusicBeatState
 	public var startCallback:Void->Void = null;
 	public var endCallback:Void->Void = null;
 
-	public var spawnedNote:Note/* = new Note()*/; // FlxTypedGroup recycle function.
+	public var spawnedNote:Note = new Note(0, 0); // FlxTypedGroup recycle function.
 	
 	public static var nextReloadAll:Bool = false;
 	override public function create()
