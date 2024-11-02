@@ -105,8 +105,8 @@ jobs:
       - name: Publish Artifact
         uses: actions/upload-artifact@v4.3.4
         with:
-          name: windowsBuild
-          path: export/release/windows/bin
+          name: windowsDebugBuild
+          path: export/debug/windows/bin
   buildMac:
     runs-on: macos-12
 
