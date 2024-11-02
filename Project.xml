@@ -2,7 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Friday Night Funkin': Psych Engine" file="PsychEngine" packageName="com.shadowmario.psychengine" package="com.shadowmario.psychengine" main="Main" version="0.2.8" company="ShadowMario" />
+	<app title="Friday Night Funkin': Miu Engine" file="Miu Engine" packageName="com.miujoan2011.miuengineredux" package="com.miujoan2011.miuengineredux" main="Main" version="0.2.8" company="MiuJoan2011_2" />
 
 	<!--Switch Export with Unique ApplicationID and Icon-->
 	<set name="APP_ID" value="0x0100f6c013bbc000" />
@@ -119,6 +119,7 @@
 	<!--Psych stuff needed-->
 	<haxelib name="linc_luajit" if="LUA_ALLOWED"/>
 	<haxelib name="hscript-iris" if="HSCRIPT_ALLOWED" version="1.1.0"/>
+	<haxelib name="hscript"/>
 	<haxelib name="hxvlc" if="VIDEOS_ALLOWED" version="1.9.2"/>
 	<haxelib name="hxdiscord_rpc" version="1.2.4" if="DISCORD_ALLOWED"/>
 	<haxelib name="flxanimate"/>
