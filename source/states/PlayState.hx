@@ -2714,7 +2714,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 			goodNoteHit(funnyNote);
-			if (plrInputNotes.length > 2 && ClientPrefs.ezSpam) //literally all you need to allow you to spam though impossibly hard jacks
+			if (plrInputNotes.length > 2 && ClientPrefs.data.ezSpam) //literally all you need to allow you to spam though impossibly hard jacks
 			{
 				var notesThatCanBeHit = plrInputNotes.length;
 				for (i in 1...Std.int(notesThatCanBeHit)) //i may consider making this hit half the notes instead
