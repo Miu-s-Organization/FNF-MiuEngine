@@ -65,7 +65,7 @@ class FPSCounter extends TextField
 	}
 
 	public dynamic function updateText():Void { // so people can override it in hscript
-		text = 'FPS: ${currentFPS}'
+		text = 'FPS: ${currentFPS}';
 		if (ClientPrefs.data.showMem) {
 			text += '\nMEM: ${FlxStringUtil.formatBytes(memoryMegas)}' + (ClientPrefs.data.showMemPeak ? ' / ${FlxStringUtil.formatBytes(memoryPeaks)}' : "");
 		}
