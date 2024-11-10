@@ -168,8 +168,14 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 		addOption(option);
 
 		var option:Option = new Option('Recycle Note',
-			"W.I.P, but it make game run faster, shoutout to SomeGuyWhoLikesCoding",
+			"W.I.P, but it make game run faster. Shoutout to SomeGuyWhoLikesCoding.",
 			'recycleNote',
+			BOOL);
+		addOption(option);
+
+		var option:Option = new Option('Show Combo Popup',
+			"If checked, the unused combo popup will be appear.",
+			'showCombo',
 			BOOL);
 		addOption(option);
 

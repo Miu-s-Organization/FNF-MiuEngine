@@ -2483,7 +2483,10 @@ class PlayState extends MusicBeatState
 	public var totalPlayed:Int = 0;
 	public var totalNotesHit:Float = 0.0;
 
-	public var showCombo:Bool = false;
+	public var showCombo(get, never):Bool;
+	function get_showCombo():Bool {
+		return ClientPrefs.data.showCombo;
+	}
 	public var showComboNum:Bool = true;
 	public var showRating:Bool = true;
 
@@ -2535,7 +2538,7 @@ class PlayState extends MusicBeatState
 
 		totalNotesHit += daRating.ratingMod;
 		note.ratingMod = daRating.ratingMod;
-		if(!note.ratingDisabled) daRating.hits++;
+		if(!note.ratingDisabled && !cpuControlled) daRating.hits++;
 		note.rating = daRating.name;
 		score = daRating.score;
 
@@ -2711,6 +2714,14 @@ class PlayState extends MusicBeatState
 				}
 			}
 			goodNoteHit(funnyNote);
+			if (plrInputNotes.length > 2 && ClientPrefs.ezSpam) //literally all you need to allow you to spam though impossibly hard jacks
+			{
+				var notesThatCanBeHit = plrInputNotes.length;
+				for (i in 1...Std.int(notesThatCanBeHit)) //i may consider making this hit half the notes instead
+				{
+					goodNoteHit(plrInputNotes[i]);
+				}
+			}
 		}
 		else
 		{
@@ -3059,7 +3070,7 @@ class PlayState extends MusicBeatState
 			if (!note.isSustainNote)
 			{
 				combo++;
-				if(combo > 9999) combo = 9999;
+				//if(combo > 9999) combo = 9999;
 				popUpScore(note);
 			}
 			var gainHealth:Bool = true; // prevent health gain, *if* sustains are treated as a singular note

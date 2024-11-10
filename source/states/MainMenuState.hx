@@ -15,7 +15,7 @@ enum MainMenuColumn {
 class MainMenuState extends MusicBeatState
 {
 	public static var psychEngineVersion:String = '1.0'; // This is also used for Discord RPC
-	public static var miuEngineVersion:String = '1.0';
+	public static var miuEngineVersion:String = '1.0b1';
 	public static var curSelected:Int = 0;
 	public static var curColumn:MainMenuColumn = CENTER;
 	var allowMouse:Bool = true; //Turn this off to block mouse movement in menus
@@ -100,7 +100,7 @@ class MainMenuState extends MusicBeatState
 		fnfVer.scrollFactor.set();
 		fnfVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(fnfVer);
-		var miuVer:FlxText = new FlxText(12, FlxG.height - 64, 0, "Miu Engine v" + miuEngineVersion + " (Modified PE, Demo)", 12);
+		var miuVer:FlxText = new FlxText(12, FlxG.height - 64, 0, "Miu Engine v" + miuEngineVersion + " (Modified PE, W.I.P)", 12);
 		miuVer.scrollFactor.set();
 		miuVer.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(miuVer);

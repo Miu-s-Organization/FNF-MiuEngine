@@ -77,7 +77,12 @@ import states.TitleState;
 	public var discordRPC:Bool = true;
 	public var loadingScreen:Bool = true;
 	public var language:String = 'en-US';
+
 	public var recycleNote:Bool = false; // this is wip.
+	public var showMem:Bool = true;
+	public var showMemPeak:Bool = true;
+	public var showCombo:Bool = false;
+	public var ezSpam:Bool = false;
 }
 
 class ClientPrefs {

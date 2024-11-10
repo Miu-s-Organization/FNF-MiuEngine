@@ -113,6 +113,12 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			BOOL);
 		addOption(option);
 
+		var option:Option = new Option('More Spammable Inputs',
+			"If checked, the input system is more spammable. Shoutout to Jordan Santiago (creator of JS Engine).",
+			'ezSpam',
+			BOOL);
+		addOption(option);
+
 		super();
 	}
 

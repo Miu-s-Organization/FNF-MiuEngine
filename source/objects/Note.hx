@@ -559,40 +559,15 @@ class Note extends FlxSprite
 		}
 	}
 
-	public function setupNoteData(chartNoteData:Note) {
-		/*wasGoodHit = hitByOpponent = tooLate = canBeHit = false; // Don't make an update call of this for the note group
-
-		strumTime = chartNoteData.strumTime;
-		if(!inEditor) strumTime += ClientPrefs.data.noteOffset;
-		noteData = chartNoteData.noteData % 4;
-		noteType = chartNoteData.noteType;
-		animSuffix = chartNoteData.animSuffix;
-		noAnimation = noMissAnimation = chartNoteData.noAnimation;
-		mustPress = chartNoteData.mustPress;
-		//doOppStuff = chartNoteData.oppNote;
-		gfNote = chartNoteData.gfNote;
-		isSustainNote = chartNoteData.isSustainNote;
-		//isSustainEnd = chartNoteData.isSustainEnd;
-		//sustainScale = chartNoteData.sustainScale;
-		lowPriority = chartNoteData.lowPriority;
-		
-		hitHealth = chartNoteData.hitHealth;
-		missHealth = chartNoteData.missHealth;
-		hitCausesMiss = chartNoteData.hitCausesMiss;
-		ignoreNote = chartNoteData.ignoreNote;
-		blockHit = chartNoteData.blockHit;
-		multSpeed = chartNoteData.multSpeed;*/
-
-		gfNote = chartNoteData.gfNote;
-		animSuffix = chartNoteData.animSuffix;
-		mustPress = chartNoteData.mustPress;
-		isSustainNote = chartNoteData.isSustainNote;
-		sustainLength = chartNoteData.sustainLength;
-		noteType = chartNoteData.noteType;
-		parent = chartNoteData.parent;
-		prevNote = chartNoteData.prevNote ?? null;
-		nextNote = chartNoteData.nextNote ?? null;
-		scrollFactor.set();
+	public function setupNoteData(chartNoteData:Note) { // the fast way to copy value from chartNoteData to this here, w/o need copy field each one.
+		var listField = Type.getInstanceFields(Type.getClass(chartNoteData));
+		var varsOnly = listField.filter((v:String) -> {
+			if (Reflect.isFunction(Reflect.getProperty(chartNoteData, v))) return false;
+			return true;
+		});
+		for (i in varsOnly) {
+			Reflect.setProperty(this, i, Reflect.getProperty(chartNoteData, i));
+		}
 	}
 
 	@:noCompletion
