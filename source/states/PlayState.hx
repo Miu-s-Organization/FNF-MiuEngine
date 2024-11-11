@@ -246,8 +246,6 @@ class PlayState extends MusicBeatState
 	// Callbacks for stages
 	public var startCallback:Void->Void = null;
 	public var endCallback:Void->Void = null;
-
-	public var spawnedNote:Note = new Note(0, 0); // FlxTypedGroup recycle function.
 	
 	public static var nextReloadAll:Bool = false;
 	override public function create()
@@ -1748,9 +1746,8 @@ class PlayState extends MusicBeatState
 			{
 				var dunceNote:Note = unspawnNotes[0];
 				if (ClientPrefs.data.recycleNote) {
-					spawnedNote = notes.recycle(Note);
+					dunceNote = notes.recycle(Note).setupNoteData(unspawnNotes[0]);
 					dunceNote.spawned = true;
-					spawnedNote.setupNoteData(dunceNote);
 				} else {
 					notes.insert(0, dunceNote);
 					dunceNote.spawned = true;
@@ -2993,6 +2990,7 @@ class PlayState extends MusicBeatState
 		if(opponentVocals.length <= 0) vocals.volume = 1;
 		strumPlayAnim(true, Std.int(Math.abs(note.noteData)), Conductor.stepCrochet * 1.25 / 1000 / playbackRate);
 		note.hitByOpponent = true;
+		if(!note.noteSplashData.disabled && !note.isSustainNote) spawnNoteSplashOnNote(note, true);
 		
 		stagesFunc(function(stage:BaseStage) stage.opponentNoteHit(note));
 		var result:Dynamic = callOnLuas('opponentNoteHit', [notes.members.indexOf(note), Math.abs(note.noteData), note.noteType, note.isSustainNote]);
@@ -3109,16 +3107,16 @@ class PlayState extends MusicBeatState
 		note.destroy();
 	}
 
-	public function spawnNoteSplashOnNote(note:Note) {
+	public function spawnNoteSplashOnNote(note:Note, ?dad:Bool = false) {
 		if(note != null) {
-			var strum:StrumNote = playerStrums.members[note.noteData];
+			final strum:StrumNote = (dad ? opponentStrums : playerStrums).members[note.noteData];
 			if(strum != null)
 				spawnNoteSplash(note, strum);
 		}
 	}
 
 	public function spawnNoteSplash(note:Note, strum:StrumNote) {
-		var splash:NoteSplash = new NoteSplash();
+		final splash:NoteSplash = new NoteSplash();
 		splash.babyArrow = strum;
 		splash.spawnSplashNote(note);
 		grpNoteSplashes.add(splash);
