@@ -13,7 +13,7 @@ haxelib install hscript-iris
 rem for debuging
 haxelib install hscript
 haxelib install tjson
-haxelib install hxdiscord_rpc 1.4.2
+haxelib install hxdiscord_rpc
 haxelib install hxvlc 1.9.2
 haxelib install hxcpp-debug-server 1.2.4
 haxelib git flxanimate https://github.com/Dot-Stuff/flxanimate 768740a56b26aa0c072720e0d1236b94afe68e3e
