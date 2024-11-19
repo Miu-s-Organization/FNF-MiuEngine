@@ -113,11 +113,15 @@ class CoolUtil
 		#if sys
 			if(!absolute) folder =  Sys.getCwd() + '$folder';
 
+			#if windows
 			folder = folder.replace('/', '\\');
+			#end
 			if(folder.endsWith('/')) folder.substr(0, folder.length - 1);
 
 			#if linux
 			var command:String = '/usr/bin/xdg-open';
+			#elseif macos
+			var command:String = 'open';
 			#else
 			var command:String = 'explorer.exe';
 			#end
@@ -159,4 +163,13 @@ class CoolUtil
 				text.borderStyle = NONE;
 		}
 	}
+	
+	// take from older psych engine
+	
+
+	inline public static function boundTo(value:Float, min:Float, max:Float):Float
+		return Math.max(min, Math.min(max, value));
+
+	inline public static function clamp(value:Float, min:Float, max:Float):Float // WAIT WHAT???? IT WAS COPY VERSION OF boundTo()?????!?!?!?!?!
+		return boundTo(vaule, min, max);
 }

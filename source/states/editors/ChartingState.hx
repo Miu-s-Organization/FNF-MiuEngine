@@ -1360,6 +1360,16 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 
 							if(!holdingAlt)
 								resetSelectedNotes();
+							
+							/* // idk how to port this to PE 1.0 so...
+							var addCount:Float = 0;
+							if (check_stackActive.checked) {
+								addCount = stepperStackNum.value * stepperStackOffset.value - 1;
+							}
+							for(i in 0...Std.int(addCount)) {
+								addNote(curSelectedNote[0] + (15000/Conductor.bpm)/stepperStackOffset.value, curSelectedNote[1] + Math.floor(stepperStackSideOffset.value), currentType);
+							}
+							*/
 
 							selectedNotes.push(noteAdded);
 							addUndoAction(ADD_NOTE, {notes: [noteAdded]});
@@ -2491,83 +2501,83 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		tab_group.add(gameOverCharDropDown); //lowest priority to display properly
 	}
 
-	var check_stackActive:FlxUICheckBox;
-	var stepperStackNum:FlxUINumericStepper;
-	var stepperStackOffset:FlxUINumericStepper;
-	var stepperStackSideOffset:FlxUINumericStepper;
-	var stepperShrinkAmount:FlxUINumericStepper;
+	var check_stackActive:PsychUICheckBox;
+	var stepperStackNum:PsychUINumericStepper;
+	var stepperStackOffset:PsychUINumericStepper;
+	var stepperStackSideOffset:PsychUINumericStepper;
+	var stepperShrinkAmount:PsychUINumericStepper;
 
 	function addNoteStackingTab():Void
 	{
 		var tab_group_stacking = mainBox.getTab('Note Spamming').menu; //new FlxUI(null, UI_box);
 		//tab_group_stacking.name = 'Note Spamming';
 
-		check_stackActive = new FlxUICheckBox(10, 10, null, null, "Enable EZ Spam Mode", 100);
+		check_stackActive = new PsychUICheckBox(10, 10, "Enable EZ Spam Mode", 100);
 		check_stackActive.name = 'check_stackActive';
 
-		stepperStackNum = new FlxUINumericStepper(10, 30, 1, 1, 0, 999999, 4);
+		stepperStackNum = new PsychUINumericStepper(10, 30, 1, 1, 0, 999999, 4);
 		stepperStackNum.name = 'stack_count';
-		blockPressWhileTypingOnStepper.push(stepperStackNum);
+		//blockPressWhileTypingOnStepper.push(stepperStackNum);
 
-		var doubleSpamNum:FlxButton = new FlxButton(stepperStackNum.x, stepperStackNum.y + 20, 'x2 Amount', function()
+		var doubleSpamNum:PsychUIButton = new PsychUIButton(stepperStackNum.x, stepperStackNum.y + 20, 'x2 Amount', function()
 		{
 			stepperStackNum.value *= 2;
 		});
 		doubleSpamNum.setGraphicSize(Std.int(doubleSpamNum.width), Std.int(doubleSpamNum.height));
-		doubleSpamNum.color = FlxColor.GREEN;
-		doubleSpamNum.label.color = FlxColor.WHITE;
+		doubleSpamNum.bg.color = FlxColor.GREEN;
+		doubleSpamNum.text.color = FlxColor.WHITE;
 
-		var halfSpamNum:FlxButton = new FlxButton(doubleSpamNum.x + doubleSpamNum.width + 20, doubleSpamNum.y, 'x0.5 Amount', function()
+		var halfSpamNum:PsychUIButton = new PsychUIButton(doubleSpamNum.x + doubleSpamNum.width + 20, doubleSpamNum.y, 'x0.5 Amount', function()
 		{
 			stepperStackNum.value /= 2;
 		});
 		halfSpamNum.setGraphicSize(Std.int(halfSpamNum.width), Std.int(halfSpamNum.height));
-		halfSpamNum.color = FlxColor.RED;
-		halfSpamNum.label.color = FlxColor.WHITE;
+		halfSpamNum.bg.color = FlxColor.RED;
+		halfSpamNum.text.color = FlxColor.WHITE;
 
-		stepperStackOffset = new FlxUINumericStepper(10, 80, 1, 1, 0, 999999, 4);
+		stepperStackOffset = new PsychUINumericStepper(10, 80, 1, 1, 0, 999999, 4);
 		stepperStackOffset.name = 'stack_offset';
-		blockPressWhileTypingOnStepper.push(stepperStackOffset);
+		//blockPressWhileTypingOnStepper.push(stepperStackOffset);
 
-		var doubleSpamMult:FlxButton = new FlxButton(stepperStackOffset.x, stepperStackOffset.y + 20, 'x2 SM', function()
+		var doubleSpamMult:PsychUIButton = new PsychUIButton(stepperStackOffset.x, stepperStackOffset.y + 20, 'x2 SM', function()
 		{
 			stepperStackOffset.value *= 2;
 		});
-		doubleSpamMult.color = FlxColor.GREEN;
-		doubleSpamMult.label.color = FlxColor.WHITE;
+		doubleSpamMult.bg.color = FlxColor.GREEN;
+		doubleSpamMult.text.color = FlxColor.WHITE;
 
-		var halfSpamMult:FlxButton = new FlxButton(doubleSpamMult.x + doubleSpamMult.width + 20, doubleSpamMult.y, 'x0.5 SM', function()
+		var halfSpamMult:PsychUIButton = new PsychUIButton(doubleSpamMult.x + doubleSpamMult.width + 20, doubleSpamMult.y, 'x0.5 SM', function()
 		{
 			stepperStackOffset.value /= 2;
 		});
 		halfSpamMult.setGraphicSize(Std.int(halfSpamMult.width), Std.int(halfSpamMult.height));
-		halfSpamMult.color = FlxColor.RED;
-		halfSpamMult.label.color = FlxColor.WHITE;
+		halfSpamMult.bg.color = FlxColor.RED;
+		halfSpamMult.text.color = FlxColor.WHITE;
 
-		stepperStackSideOffset = new FlxUINumericStepper(10, 140, 1, 0, -9999, 9999);
+		stepperStackSideOffset = new PsychUINumericStepper(10, 140, 1, 0, -9999, 9999);
 		stepperStackSideOffset.name = 'stack_sideways';
-		blockPressWhileTypingOnStepper.push(stepperStackSideOffset);
+		//blockPressWhileTypingOnStepper.push(stepperStackSideOffset);
 
-		stepperShrinkAmount = new FlxUINumericStepper(10, stepperStackSideOffset.y + 30, 1, 1, 0, 8192, 4);
+		stepperShrinkAmount = new PsychUINumericStepper(10, stepperStackSideOffset.y + 30, 1, 1, 0, 8192, 4);
 		stepperShrinkAmount.name = 'shrinker_amount';
-		blockPressWhileTypingOnStepper.push(stepperShrinkAmount);
+		//blockPressWhileTypingOnStepper.push(stepperShrinkAmount);
 
-		var doubleShrinker:FlxButton = new FlxButton(stepperShrinkAmount.x, stepperShrinkAmount.y + 20, 'x2 SH', function()
+		var doubleShrinker:PsychUIButton = new PsychUIButton(stepperShrinkAmount.x, stepperShrinkAmount.y + 20, 'x2 SH', function()
 		{
 			stepperShrinkAmount.value *= 2;
 		});
-		doubleShrinker.color = FlxColor.GREEN;
-		doubleShrinker.label.color = FlxColor.WHITE;
+		doubleShrinker.bg.color = FlxColor.GREEN;
+		doubleShrinker.text.color = FlxColor.WHITE;
 
-		var halfShrinker:FlxButton = new FlxButton(doubleShrinker.x + doubleShrinker.width + 20, doubleShrinker.y, 'x0.5 SH', function()
+		var halfShrinker:PsychUIButton = new PsychUIButton(doubleShrinker.x + doubleShrinker.width + 20, doubleShrinker.y, 'x0.5 SH', function()
 		{
 			stepperShrinkAmount.value /= 2;
 		});
 		halfShrinker.setGraphicSize(Std.int(halfShrinker.width), Std.int(halfShrinker.height));
-		halfShrinker.color = FlxColor.RED;
-		halfShrinker.label.color = FlxColor.WHITE;
+		halfShrinker.bg.color = FlxColor.RED;
+		halfShrinker.text.color = FlxColor.WHITE;
 
-		var shrinkNotesButton:FlxButton = new FlxButton(10, doubleShrinker.y + 30, "Stretch Notes", function()
+		var shrinkNotesButton:PsychUIButton = new PsychUIButton(10, doubleShrinker.y + 30, "Stretch Notes", function()
 		{
 			var minimumTime:Float = sectionStartTime();
 			var sectionEndTime:Float = sectionStartTime(1);
@@ -2589,11 +2599,11 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			updateGrid(false);
 		});
 
-		var stepperShiftSteps:FlxUINumericStepper = new FlxUINumericStepper(10, shrinkNotesButton.y + 30, 1, 1, -8192, 8192, 4);
+		var stepperShiftSteps:PsychUINumericStepper = new PsychUINumericStepper(10, shrinkNotesButton.y + 30, 1, 1, -8192, 8192, 4);
 		stepperShiftSteps.name = 'shifter_amount';
-		blockPressWhileTypingOnStepper.push(stepperShiftSteps);
+		//blockPressWhileTypingOnStepper.push(stepperShiftSteps);
 
-		var shiftNotesButton:FlxButton = new FlxButton(10, stepperShiftSteps.y + 20, "Shift Notes", function()
+		var shiftNotesButton:PsychUIButton = new PsychUIButton(10, stepperShiftSteps.y + 20, "Shift Notes", function()
 		{
 			for (i in 0..._song.notes[curSec].sectionNotes.length)
 			{
@@ -2607,9 +2617,9 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 
 		var stepperDuplicateAmount:FlxUINumericStepper = new FlxUINumericStepper(10, shiftNotesButton.y + 30, 1, 1, 0, 32, 4);
 		stepperDuplicateAmount.name = 'duplicater_amount';
-		blockPressWhileTypingOnStepper.push(stepperDuplicateAmount);
+		//blockPressWhileTypingOnStepper.push(stepperDuplicateAmount);
 
-		var dupeNotesButton:FlxButton = new FlxButton(10, stepperDuplicateAmount.y + 20, "Duplicate Notes", function()
+		var dupeNotesButton:PsychUIButton = new PsychUIButton(10, stepperDuplicateAmount.y + 20, "Duplicate Notes", function()
 		{
 			var copiedNotes:Array<Dynamic> = [];
 			for (i in 0..._song.notes[curSec].sectionNotes.length)

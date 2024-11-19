@@ -83,6 +83,7 @@ import states.TitleState;
 	public var showMemPeak:Bool = true;
 	public var showCombo:Bool = false;
 	public var ezSpam:Bool = false;
+	public var iconBounce:String = 'Default';
 }
 
 class ClientPrefs {

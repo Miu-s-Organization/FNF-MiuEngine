@@ -166,6 +166,13 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			'comboStacking',
 			BOOL);
 		addOption(option);
+		
+		var option:Option = new Option('Note Splashes:',
+			"Select your prefered Note Splash variation.",
+			'splashSkin',
+			STRING,
+			['Default', 'New Psych', 'Old Psych', 'OS Engine', 'Strident Crisis', 'None']);
+		addOption(option);
 
 		/*var option:Option = new Option('THESE SETTING AFTER ARE FOR OPTIMIZATION',
 			"",

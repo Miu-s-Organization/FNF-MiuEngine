@@ -1843,13 +1843,55 @@ class PlayState extends MusicBeatState
 	// Health icon updaters
 	public dynamic function updateIconsScale(elapsed:Float)
 	{
-		var mult:Float = FlxMath.lerp(1, iconP1.scale.x, Math.exp(-elapsed * 9 * playbackRate));
-		iconP1.scale.set(mult, mult);
-		iconP1.updateHitbox();
+		switch (ClientPrefs.data.iconBounce.toLowerCase()) {
+			case 'new psych':
+				var mult:Float = FlxMath.lerp(1, iconP1.scale.x, Math.exp(-elapsed * 9 * playbackRate));
+				iconP1.scale.set(mult, mult);
+				iconP1.updateHitbox();
 
-		var mult:Float = FlxMath.lerp(1, iconP2.scale.x, Math.exp(-elapsed * 9 * playbackRate));
-		iconP2.scale.set(mult, mult);
-		iconP2.updateHitbox();
+				var mult:Float = FlxMath.lerp(1, iconP2.scale.x, Math.exp(-elapsed * 9 * playbackRate));
+				iconP2.scale.set(mult, mult);
+				iconP2.updateHitbox();
+				
+			case 'old psych':
+				iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, CoolUtil.boundTo(1 - (elapsed * 30), 0, 1))));
+				iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, CoolUtil.boundTo(1 - (elapsed * 30), 0, 1))));
+
+				iconP1.updateHitbox();
+				iconP2.updateHitbox();
+				
+				iconP1.y = (healthBar.y - 175) + (iconP1.scale.y * 100);
+				iconP2.y = (healthBar.y - 175) + (iconP2.scale.y * 100);
+				
+			case 'os engine':
+				iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, CoolUtil.boundTo(1 - (elapsed * 30), 0, 1))));
+				iconP1.updateHitbox();
+				iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, CoolUtil.boundTo(1 - (elapsed * 30), 0, 1))));
+				iconP2.updateHitbox();
+			
+			case 'Strident Crisis':
+				var mult:Float = FlxMath.lerp(1, iconP1.scale.x, CoolUtil.boundTo(1 - (elapsed * 9), 0, 2));
+				iconP1.scale.set(mult, mult);
+				iconP1.updateHitbox();
+
+				var mult:Float = FlxMath.lerp(1, iconP2.scale.x, CoolUtil.boundTo(1 - (elapsed * 9), 0, 2));
+				iconP2.scale.set(mult, mult);
+				iconP2.updateHitbox();
+				
+				iconP1.centerOffsets();
+				iconP2.centerOffsets();
+
+				iconP1.updateHitbox();
+				iconP2.updateHitbox();
+
+				iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, 0.50)));
+				iconP1.updateHitbox();
+
+				iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, 0.50)));
+				iconP2.updateHitbox();
+				
+			default:
+		}
 	}
 
 	public dynamic function updateIconsPosition()
@@ -1874,8 +1916,10 @@ class PlayState extends MusicBeatState
 		var newPercent:Null<Float> = FlxMath.remapToRange(FlxMath.bound(healthBar.valueFunction(), healthBar.bounds.min, healthBar.bounds.max), healthBar.bounds.min, healthBar.bounds.max, 0, 100);
 		healthBar.percent = (newPercent != null ? newPercent : 0);
 
-		iconP1.animation.curAnim.curFrame = (healthBar.percent < 20) ? 1 : (healthBar.percent > 80 && iconP1.width % 450 == 0 ? 2 : 0); //If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
-		iconP2.animation.curAnim.curFrame = (healthBar.percent > 80) ? 1 : (healthBar.percent < 20 && iconP2.width % 450 == 0 ? 2 : 0); //If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
+		iconP1.animation.curAnim.curFrame = (healthBar.percent < 20) ? 1 :
+			(healthBar.percent > 80 && Math.round(iconP1.width / iconP1.height) == 3 ? 2 : 0); //If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
+		iconP2.animation.curAnim.curFrame = (healthBar.percent > 80) ? 1 :
+			(healthBar.percent < 20 && Math.round(iconP2.width / iconP2.height) == 3 ? 2 : 0); //If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
 		return health;
 	}
 
@@ -3178,11 +3222,68 @@ class PlayState extends MusicBeatState
 		if (generatedMusic)
 			notes.sort(FlxSort.byY, ClientPrefs.data.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 
-		iconP1.scale.set(1.2, 1.2);
-		iconP2.scale.set(1.2, 1.2);
+		switch (ClientPrefs.data.iconBounce.toLowerCase()) {
+			case 'default': // golden apple bounce but like in denpa engine with unfairred edition angle bounce :)))
+				if (curBeat % gfSpeed == 0) {
+					curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
+						iconP1.scale.set(1.1, 0.8);
+						iconP2.scale.set(1.1, 1.3);
+					
+						FlxTween.angle(iconP1, -24, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(iconP2, 24, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+					} : {
+						iconP1.scale.set(1.1, 1.3);
+						iconP2.scale.set(1.1, 0.8);
+						
+						FlxTween.angle(iconP1, 24, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(iconP2, -24, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+					}
+					FlxTween.tween(iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+					FlxTween.tween(iconP2, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+				}
+			
+			case 'new psych':
+				iconP1.scale.set(1.2, 1.2);
+				iconP2.scale.set(1.2, 1.2);
 
-		iconP1.updateHitbox();
-		iconP2.updateHitbox();
+				iconP1.updateHitbox();
+				iconP2.updateHitbox();
+			
+			case 'old psych': // take from pe 0.4.2
+				iconP1.setGraphicSize(Std.int(iconP1.width + 30));
+				iconP2.setGraphicSize(Std.int(iconP2.width + 30));
+
+				iconP1.updateHitbox();
+				iconP2.updateHitbox();
+			
+			case 'os engine':
+				iconP1.scale.set(1.2, 1.2);
+				iconP2.scale.set(1.2, 1.2);
+				
+				var angleThing:Int = 8;
+				if (curBeat % 2 == 0) angleThing = -8;
+					
+				iconP1.angle = angleThing;
+				iconP2.angle = angleThing;
+				
+				iconP1.updateHitbox();
+				iconP2.updateHitbox();
+			
+			case 'strident crisis':
+				final funny:Float = (healthBar.percent * 0.01) + 0.01;
+		
+				//health icon bounce but epic
+				iconP1.setGraphicSize(Std.int(iconP1.width + (50 * (2 + funny))), Std.int(iconP1.height - (25 * (2 + funny))));
+				iconP2.setGraphicSize(Std.int(iconP2.width + (50 * (2 - funny))), Std.int(iconP2.height - (25 * (2 - funny))));	
+				
+				iconP1.scale.set(1.1, 1.8);
+				iconP2.scale.set(1.1, 1.8);
+				
+				iconP1.angle = -15;
+				iconP2.angle = 15;
+				FlxTween.angle(iconP1, iconP1.angle, 0, Conductor.crochet / 1300, {ease: FlxEase.quadOut});
+				FlxTween.angle(iconP2, iconP2.angle, 0, Conductor.crochet / 1300, {ease: FlxEase.quadOut});
+		}
 
 		characterBopper(curBeat);
 

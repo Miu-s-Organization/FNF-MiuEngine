@@ -6,7 +6,7 @@ class HealthIcon extends FlxSprite
 	private var isPlayer:Bool = false;
 	private var char:String = '';
 
-	public function new(char:String = 'face', isPlayer:Bool = false, ?allowGPU:Bool = true)
+	public function new(char:String = 'face', isPlayer:Bool = false, allowGPU:Bool = true)
 	{
 		super();
 		this.isPlayer = isPlayer;
@@ -23,11 +23,12 @@ class HealthIcon extends FlxSprite
 	}
 
 	private var iconOffsets:Array<Float> = [0, 0];
-	public function changeIcon(char:String, ?allowGPU:Bool = true) {
+	public function changeIcon(char:String, allowGPU:Bool = true) {
 		if(this.char != char) {
 			var name:String = 'icons/' + char;
 			if(!Paths.fileExists('images/' + name + '.png', IMAGE)) name = 'icons/icon-' + char; //Older versions of psych engine's support
 			if(!Paths.fileExists('images/' + name + '.png', IMAGE)) name = 'icons/icon-face'; //Prevents crash from missing icon
+			if(!Paths.fileExists('images/icons/icon-face.png', IMAGE)) trace("Warning: could not find the placeholder icon, expect crashes!");
 			
 			var graphic = Paths.image(name, allowGPU);
 			var iSize:Float = Math.round(graphic.width / graphic.height);
