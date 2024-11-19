@@ -167,8 +167,21 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			BOOL);
 		addOption(option);
 
+		/*var option:Option = new Option('THESE SETTING AFTER ARE FOR OPTIMIZATION',
+			"",
+			'',
+			STRING,
+			[""]);
+		addOption(option);*/
+
 		var option:Option = new Option('Recycle Note',
-			"W.I.P, but it make game run faster. Shoutout to SomeGuyWhoLikesCoding.",
+			"(W.I.P) If checked, game run faster because game using FlxTypedGroup's recycle function.\nShoutout to SomeGuyWhoLikesCoding.",
+			'recycleNote',
+			BOOL);
+		addOption(option);
+
+		var option:Option = new Option('Fast Note Spawn',
+			"(W.I.P) If checked, game using NoteGroup's recycle function instead of FlxTypedGroup.\nShoutout to Codename Engine Team and Jordan Santiago (for port to JS Engine and a place that i borrow).",
 			'recycleNote',
 			BOOL);
 		addOption(option);

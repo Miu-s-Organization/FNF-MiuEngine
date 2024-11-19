@@ -11,9 +11,9 @@ import haxe.format.JsonPrinter;
 class PsychJsonPrinter extends JsonPrinter
 {
 	var _ignoreTab:Array<String> = [];
-	public static function print(o:Dynamic, ?ignoreTab:Array<String>):String
+	public static function print(o:Dynamic, ?ignoreTab:Array<String>, compress:Bool = false):String
 	{
-		var printer = new PsychJsonPrinter(null, '\t');
+		var printer = new PsychJsonPrinter(null, compress == true ? '\t' : '');
 		if(ignoreTab != null) printer._ignoreTab = ignoreTab;
 		printer.write("", o);
 		return printer.buf.toString();

@@ -568,32 +568,8 @@ class Note extends FlxSprite
 		for (i in varsOnly) {
 			Reflect.setProperty(this, i, Reflect.getProperty(chartNoteData, i));
 		}
-		animation = new PsychAnimationController(this);
-
-		antialiasing = ClientPrefs.data.antialiasing;
-		this.moves = false;
-
-		x += (ClientPrefs.data.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X) + 50;
-		// MAKE SURE ITS DEFINITELY OFF SCREEN?
-		y -= 2000;
-		if(!inEditor) this.strumTime += ClientPrefs.data.noteOffset;
-
-		if(noteData > -1)
-		{
-			rgbShader = new RGBShaderReference(this, initializeGlobalRGBShader(noteData));
-			if(PlayState.SONG != null && PlayState.SONG.disableNoteRGB) rgbShader.enabled = false;
-			texture = '';
-
-			x += swagWidth * (noteData);
-			if(!isSustainNote && noteData < colArray.length) { //Doing this 'if' check to fix the warnings on Senpai songs
-				var animToPlay:String = '';
-				animToPlay = colArray[noteData % colArray.length];
-				animation.play(animToPlay + 'Scroll');
-			}
-		}
-		if(prevNote != null)
-			prevNote.nextNote = this;
-
+		angle = 0;
+		
 		if (isSustainNote && prevNote != null)
 		{
 			alpha = 0.6;
@@ -618,7 +594,7 @@ class Note extends FlxSprite
 				prevNote.animation.play(colArray[prevNote.noteData % colArray.length] + 'hold');
 
 				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.05;
-				if(PlayState.instance != null) prevNote.scale.y *= PlayState.instance.songSpeed;
+				if(createdFrom != null && createdFrom.songSpeed != null) prevNote.scale.y *= createdFrom.songSpeed;
 
 				if(PlayState.isPixelStage) {
 					prevNote.scale.y *= 1.19;
@@ -640,7 +616,7 @@ class Note extends FlxSprite
 			centerOffsets();
 			centerOrigin();
 		}
-		x += offsetX;
+		
 		return this;
 	}
 
