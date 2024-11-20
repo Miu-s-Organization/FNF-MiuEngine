@@ -165,11 +165,9 @@ class CoolUtil
 	}
 	
 	// take from older psych engine
-	
-
 	inline public static function boundTo(value:Float, min:Float, max:Float):Float
 		return Math.max(min, Math.min(max, value));
 
 	inline public static function clamp(value:Float, min:Float, max:Float):Float // WAIT WHAT???? IT WAS COPY VERSION OF boundTo()?????!?!?!?!?!
-		return boundTo(vaule, min, max);
+		return boundTo(value, min, max);
 }

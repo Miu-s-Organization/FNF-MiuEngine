@@ -2509,7 +2509,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 
 	function addNoteStackingTab():Void
 	{
-		var tab_group_stacking = mainBox.getTab('Note Spamming').menu; //new FlxUI(null, UI_box);
+		/*var tab_group_stacking = mainBox.getTab('Note Spamming').menu; //new FlxUI(null, UI_box);
 		//tab_group_stacking.name = 'Note Spamming';
 
 		check_stackActive = new PsychUICheckBox(10, 10, "Enable EZ Spam Mode", 100);
@@ -2581,9 +2581,9 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		{
 			var minimumTime:Float = sectionStartTime();
 			var sectionEndTime:Float = sectionStartTime(1);
-			for (i in 0..._song.notes[curSec].sectionNotes.length)
+			for (i in 0...PlayState.SONG.notes[curSec].sectionNotes.length)
 			{
-				var note:Array<Dynamic> = _song.notes[curSec].sectionNotes[i];
+				var note:Array<Dynamic> = PlayState.SONG.notes[curSec].sectionNotes[i];
 				if (note[2] > 0) note[2] *= stepperShrinkAmount.value;
        				var originalStartTime:Float = note[0]; // Original start time (in seconds)
 				originalStartTime = originalStartTime - sectionStartTime();
@@ -2594,9 +2594,9 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 
        				note[0] = Math.max(newStartTime, minimumTime);
 				if (note[0] < minimumTime) note[0] = minimumTime;
-				_song.notes[curSec].sectionNotes[i] = note;
+				PlayState.SONG.notes[curSec].sectionNotes[i] = note;
 			}
-			updateGrid(false);
+			//updateGrid(false);
 		});
 
 		var stepperShiftSteps:PsychUINumericStepper = new PsychUINumericStepper(10, shrinkNotesButton.y + 30, 1, 1, -8192, 8192, 4);
@@ -2609,13 +2609,13 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			{
 				_song.notes[curSec].sectionNotes[i][0] += (stepperShiftSteps.value) * (15000/Conductor.bpm);
 			}
-			updateGrid(false);
+			//updateGrid(false);
 		});
 		shiftNotesButton.setGraphicSize(Std.int(shiftNotesButton.width), Std.int(shiftNotesButton.height));
 
 		//ok im adding way too many spamcharting features LOL
 
-		var stepperDuplicateAmount:FlxUINumericStepper = new FlxUINumericStepper(10, shiftNotesButton.y + 30, 1, 1, 0, 32, 4);
+		var stepperDuplicateAmount:PsychUINumericStepper = new PsychUINumericStepper(10, shiftNotesButton.y + 30, 1, 1, 0, 32, 4);
 		stepperDuplicateAmount.name = 'duplicater_amount';
 		//blockPressWhileTypingOnStepper.push(stepperDuplicateAmount);
 
@@ -2665,7 +2665,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		tab_group_stacking.add(new FlxText(100, stepperShiftSteps.y, 0, "Steps to Shift By"));
 		tab_group_stacking.add(new FlxText(100, stepperDuplicateAmount.y, 0, "Amount of Duplicates"));
 
-		//UI_box.addGroup(tab_group_stacking);
+		//UI_box.addGroup(tab_group_stacking);*/
 	}
 
 	var eventDropDown:PsychUIDropDownMenu;

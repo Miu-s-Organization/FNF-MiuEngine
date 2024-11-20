@@ -79,6 +79,7 @@ import states.TitleState;
 	public var language:String = 'en-US';
 
 	public var recycleNote:Bool = false; // this is wip.
+	public var fastNoteSpawn:Bool = false; // wip again.
 	public var showMem:Bool = true;
 	public var showMemPeak:Bool = true;
 	public var showCombo:Bool = false;

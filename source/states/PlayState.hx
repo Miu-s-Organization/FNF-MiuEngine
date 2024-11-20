@@ -1295,7 +1295,7 @@ class PlayState extends MusicBeatState
 		catch (e:Dynamic) {}
 		FlxG.sound.list.add(inst);
 
-		notes = new FlxTypedGroup<Note>();
+		notes = new NoteGroup();
 		noteGroup.add(notes);
 
 		try
@@ -3126,7 +3126,7 @@ class PlayState extends MusicBeatState
 		}
 
 		stagesFunc(function(stage:BaseStage) stage.goodNoteHit(note));
-		var result:Dynamic = callOnLuas('goodNoteHit', [notes.members.indexOf(note), leData, leType, isSus]);
+		var result:Dynamic = callOnLuas('goodNoteHit', [notes.members.indexOf(note), Math.round(Math.abs(note.noteData)), note.noteType, note.isSustainNote]);
 		if(result != LuaUtils.Function_Stop && result != LuaUtils.Function_StopHScript && result != LuaUtils.Function_StopAll) callOnHScript('goodNoteHit', [note]);
 		if(!note.isSustainNote) invalidateNote(note);
 	}
