@@ -167,19 +167,19 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			BOOL);
 		addOption(option);
 		
-		var option:Option = new Option('Note Splashes:',
-			"Select your prefered Note Splash variation.",
-			'splashSkin',
+		var option:Option = new Option('Icon Bounce:',
+			"Select your prefered Icon Bounce variation.",
+			'iconBounce',
 			STRING,
 			['Default', 'New Psych', 'Old Psych', 'OS Engine', 'Strident Crisis', 'None']);
 		addOption(option);
 
-		/*var option:Option = new Option('THESE SETTING AFTER ARE FOR OPTIMIZATION',
+		var option:Option = new Option('THESE SETTING AFTER ARE FOR OPTIMIZATION',
 			"",
 			'',
 			STRING,
-			[""]);
-		addOption(option);*/
+			['', ' ']);
+		addOption(option);
 
 		var option:Option = new Option('Recycle Note',
 			"(W.I.P) If checked, game run faster because game using FlxTypedGroup's recycle function.\nShoutout to SomeGuyWhoLikesCoding.",
@@ -189,7 +189,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 
 		var option:Option = new Option('Fast Note Spawn',
 			"(W.I.P) If checked, game using NoteGroup's recycle function instead of FlxTypedGroup.\nShoutout to Codename Engine Team and Jordan Santiago (for port to JS Engine and a place that i borrow).",
-			'recycleNote',
+			'fastNoteSpawn',
 			BOOL);
 		addOption(option);
 

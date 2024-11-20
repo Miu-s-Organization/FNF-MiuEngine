@@ -85,6 +85,8 @@ import states.TitleState;
 	public var showCombo:Bool = false;
 	public var ezSpam:Bool = false;
 	public var iconBounce:String = 'Default';
+	
+	public var blank:String = ' ';
 }
 
 class ClientPrefs {
