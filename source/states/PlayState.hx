@@ -1863,6 +1863,16 @@ class PlayState extends MusicBeatState
 				iconP1.y = (healthBar.y - 175) + (iconP1.scale.y * 100);
 				iconP2.y = (healthBar.y - 175) + (iconP2.scale.y * 100);
 				
+			case 'dave and bambi':
+				final thingy = 0.88; //(144 / Main.fps.currentFPS) * 0.88;
+				//still gotta make this fps consistent crap
+
+				iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, thingy)),Std.int(FlxMath.lerp(150, iconP1.height, thingy)));
+				iconP1.updateHitbox();
+
+				iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, thingy)),Std.int(FlxMath.lerp(150, iconP2.height, thingy)));
+				iconP2.updateHitbox();
+				
 			case 'os engine':
 				iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, CoolUtil.boundTo(1 - (elapsed * 30), 0, 1))));
 				iconP1.updateHitbox();
@@ -1896,9 +1906,14 @@ class PlayState extends MusicBeatState
 
 	public dynamic function updateIconsPosition()
 	{
-		var iconOffset:Int = 26;
-		iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
-		iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
+		final iconOffset:Int = 26;
+		if (ClientPrefs.data.iconBounce != 'Dave And Bambi') {
+			iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
+			iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
+		} else {
+			iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01) - iconOffset);
+			iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (iconP2.width - iconOffset);
+		}
 	}
 
 	var iconsAnimations:Bool = true;
@@ -2505,11 +2520,11 @@ class PlayState extends MusicBeatState
 
 	public function KillNotes() {
 		while(notes.length > 0) {
-			//var daNote:Note = notes.members[0];
-			//daNote.active = false;
-			//daNote.visible = false;
-			//invalidateNote(daNote);
-			notes.remove(notes.members[0], true);
+			var daNote:Note = notes.members[0];
+			daNote.active = false;
+			daNote.visible = false;
+			invalidateNote(daNote, true);
+			//notes.remove(notes.members[0], true);
 		}
 		unspawnNotes = [];
 		eventNotes = [];
@@ -3131,10 +3146,10 @@ class PlayState extends MusicBeatState
 		if(!note.isSustainNote) invalidateNote(note);
 	}
 
-	public function invalidateNote(note:Note):Void {
-		//note.kill();
-		//notes.remove(note, true);
-		//note.destroy();
+	public function invalidateNote(note:Note, ?doKill:Bool = false):Void {
+		note.kill();
+		notes.remove(note, true);
+		if (!ClientPrefs.data.recycleNote || doKill) note.destroy();
 		note.exists = note.wasGoodHit = note.hitByOpponent = note.tooLate = note.canBeHit = false;
 		if (ClientPrefs.data.fastNoteSpawn) notes.pushToPool(note);
 	}
@@ -3229,14 +3244,14 @@ class PlayState extends MusicBeatState
 						iconP1.scale.set(1.1, 0.8);
 						iconP2.scale.set(1.1, 1.3);
 					
-						FlxTween.angle(iconP1, -24, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-						FlxTween.angle(iconP2, 24, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(iconP1, -25, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(iconP2, 25, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 					} : {
 						iconP1.scale.set(1.1, 1.3);
 						iconP2.scale.set(1.1, 0.8);
 						
-						FlxTween.angle(iconP1, 24, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-						FlxTween.angle(iconP2, -24, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(iconP1, 25, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(iconP2, -25, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 					}
 					FlxTween.tween(iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 					FlxTween.tween(iconP2, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
@@ -3255,6 +3270,32 @@ class PlayState extends MusicBeatState
 
 				iconP1.updateHitbox();
 				iconP2.updateHitbox();
+			
+			case 'dave and bambi':
+				iconP1.setGraphicSize(Std.int(iconP1.width + (50 * (funny + 0.1))),Std.int(iconP1.height - (25 * funny)));
+				iconP2.setGraphicSize(Std.int(iconP2.width + (50 * ((2 - funny) + 0.1))),Std.int(iconP2.height - (25 * ((2 - funny) + 0.1))));
+				
+				iconP1.updateHitbox();
+				iconP2.updateHitbox();
+				
+			case 'golden apple':
+				if (curBeat % gfSpeed == 0) {
+					curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
+						iconP1.scale.set(1.1, 0.8);
+						iconP2.scale.set(1.1, 1.3);
+					
+						FlxTween.angle(iconP1, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(iconP2, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+					} : {
+						iconP1.scale.set(1.1, 1.3);
+						iconP2.scale.set(1.1, 0.8);
+						
+						FlxTween.angle(iconP1, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+					}
+					FlxTween.tween(iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+					FlxTween.tween(iconP2, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+				}
 			
 			case 'os engine':
 				iconP1.scale.set(1.2, 1.2);
@@ -3283,6 +3324,7 @@ class PlayState extends MusicBeatState
 				iconP2.angle = 15;
 				FlxTween.angle(iconP1, iconP1.angle, 0, Conductor.crochet / 1300, {ease: FlxEase.quadOut});
 				FlxTween.angle(iconP2, iconP2.angle, 0, Conductor.crochet / 1300, {ease: FlxEase.quadOut});
+			default:
 		}
 
 		characterBopper(curBeat);
