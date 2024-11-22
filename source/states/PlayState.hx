@@ -530,6 +530,15 @@ class PlayState extends MusicBeatState
 		iconP2.alpha = ClientPrefs.data.healthBarAlpha;
 		iconP2.autoAdjustOffset = !(iconBounce == 'dave and bambi' || iconBounce == 'golden apple');
 		uiGroup.add(iconP2);
+		
+		/*
+			fun fact: if you want have icon bounce like bambi aggi... mod that idk what is name but yeah skip it (made on lua):
+			function onCreatePost()
+				setPropertyFromClass('ClientPrefs', 'data.iconBounce', 'dave and bambi')
+				setProperty('iconP1.autoAdjustOffset', true)
+				setProperty('iconP2.autoAdjustOffset', true)
+			end
+		*/
 
 		scoreTxt = new FlxText(0, healthBar.y + 40, FlxG.width, "", 20);
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
