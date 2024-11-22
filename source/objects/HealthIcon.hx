@@ -50,7 +50,7 @@ class HealthIcon extends FlxSprite
 	override function updateHitbox()
 	{
 		super.updateHitbox();
-		if(autoAdjustOffset || width % (animation.numFrames == 3 ? 900 : 600))
+		if(autoAdjustOffset || width % (animation.numFrames == 3 ? 900 : 600) == 0)
 		{
 			offset.x = iconOffsets[0];
 			offset.y = iconOffsets[1];
