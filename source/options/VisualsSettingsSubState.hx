@@ -171,10 +171,10 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			"Select your prefered Icon Bounce variation.",
 			'iconBounce',
 			STRING,
-			['Default', 'New Psych', 'Old Psych', 'Dave And Bambi', 'Golden Apple', 'OS Engine', 'Strident Crisis', 'None']);
+			['Default', 'New Psych', 'Old Psych', 'Dave and Bambi', 'Golden Apple', 'OS Engine', 'Strident Crisis', 'None']);
 		addOption(option);
 
-		var option:Option = new Option('THESE SETTING AFTER ARE FOR OPTIMIZATION (UNFINISHED, W.I.P)',
+		var option:Option = new Option('OPTIMIZATION SETTING (UNFINISHED, W.I.P)',
 			"",
 			'blank',
 			STRING,

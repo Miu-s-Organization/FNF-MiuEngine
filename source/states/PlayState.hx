@@ -516,16 +516,19 @@ class PlayState extends MusicBeatState
 		reloadHealthBarColors();
 		uiGroup.add(healthBar);
 
+		final iconBounce = ClientPrefs.data.iconBounce.toLowerCase();
 		iconP1 = new HealthIcon(boyfriend.healthIcon, true);
 		iconP1.y = healthBar.y - 75;
 		iconP1.visible = !ClientPrefs.data.hideHud;
 		iconP1.alpha = ClientPrefs.data.healthBarAlpha;
+		iconP1.autoAdjustOffset = !(iconBounce == 'dave and bambi' || iconBounce == 'golden apple');
 		uiGroup.add(iconP1);
 
 		iconP2 = new HealthIcon(dad.healthIcon, false);
 		iconP2.y = healthBar.y - 75;
 		iconP2.visible = !ClientPrefs.data.hideHud;
 		iconP2.alpha = ClientPrefs.data.healthBarAlpha;
+		iconP2.autoAdjustOffset = !(iconBounce == 'dave and bambi' || iconBounce == 'golden apple');
 		uiGroup.add(iconP2);
 
 		scoreTxt = new FlxText(0, healthBar.y + 40, FlxG.width, "", 20);
@@ -1932,9 +1935,9 @@ class PlayState extends MusicBeatState
 		healthBar.percent = (newPercent != null ? newPercent : 0);
 
 		iconP1.animation.curAnim.curFrame = (healthBar.percent < 20) ? 1 :
-			(healthBar.percent > 80 && Math.round(iconP1.width / iconP1.height) == 3 ? 2 : 0); //If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
+			(healthBar.percent > 80 && iconP1.animation.numFrames == 3 ? 2 : 0); //If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
 		iconP2.animation.curAnim.curFrame = (healthBar.percent > 80) ? 1 :
-			(healthBar.percent < 20 && Math.round(iconP2.width / iconP2.height) == 3 ? 2 : 0); //If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
+			(healthBar.percent < 20 && iconP2.animation.numFrames == 3 ? 2 : 0); //If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
 		return health;
 	}
 
@@ -3146,12 +3149,12 @@ class PlayState extends MusicBeatState
 		if(!note.isSustainNote) invalidateNote(note);
 	}
 
-	public function invalidateNote(note:Note, ?doKill:Bool = false):Void {
+	public function invalidateNote(note:Note, ?doKill:Bool = true):Void {
 		note.kill();
 		notes.remove(note, true);
-		if (!ClientPrefs.data.recycleNote || doKill) note.destroy();
+		if (!ClientPrefs.data.recycleNote/* && !doKill*/) note.destroy();
 		note.exists = note.wasGoodHit = note.hitByOpponent = note.tooLate = note.canBeHit = false;
-		if (ClientPrefs.data.fastNoteSpawn) notes.pushToPool(note);
+		if (ClientPrefs.data.recycleNote && ClientPrefs.data.fastNoteSpawn) notes.pushToPool(note);
 	}
 
 	public function spawnNoteSplashOnNote(note:Note, ?isDad:Bool = false) {
@@ -3238,25 +3241,6 @@ class PlayState extends MusicBeatState
 			notes.sort(FlxSort.byY, ClientPrefs.data.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 
 		switch (ClientPrefs.data.iconBounce.toLowerCase()) {
-			case 'default': // golden apple bounce but like in denpa engine with unfairred edition angle bounce :)))
-				if (curBeat % gfSpeed == 0) {
-					curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
-						iconP1.scale.set(1.1, 0.8);
-						iconP2.scale.set(1.1, 1.3);
-					
-						FlxTween.angle(iconP1, -25, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-						FlxTween.angle(iconP2, 25, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-					} : {
-						iconP1.scale.set(1.1, 1.3);
-						iconP2.scale.set(1.1, 0.8);
-						
-						FlxTween.angle(iconP1, 25, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-						FlxTween.angle(iconP2, -25, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-					}
-					FlxTween.tween(iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-					FlxTween.tween(iconP2, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-				}
-			
 			case 'new psych':
 				iconP1.scale.set(1.2, 1.2);
 				iconP2.scale.set(1.2, 1.2);
@@ -3280,20 +3264,21 @@ class PlayState extends MusicBeatState
 				iconP1.updateHitbox();
 				iconP2.updateHitbox();
 				
-			case 'golden apple':
+			case 'golden apple' | 'default': // the 'default' one is golden apple bounce but like in denpa engine with unfairred edition angle bounce :)))
+				final angle = ClientPrefs.data.iconBounce.toLowerCase() == 'golden apple' ? 15 : 25;
 				if (curBeat % gfSpeed == 0) {
 					curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
 						iconP1.scale.set(1.1, 0.8);
 						iconP2.scale.set(1.1, 1.3);
 					
-						FlxTween.angle(iconP1, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-						FlxTween.angle(iconP2, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(iconP1, -angle, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(iconP2, angle, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 					} : {
 						iconP1.scale.set(1.1, 1.3);
 						iconP2.scale.set(1.1, 0.8);
 						
-						FlxTween.angle(iconP1, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-						FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(iconP1, angle, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(iconP2, -angle, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 					}
 					FlxTween.tween(iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 					FlxTween.tween(iconP2, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
