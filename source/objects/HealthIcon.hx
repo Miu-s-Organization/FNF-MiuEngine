@@ -33,8 +33,8 @@ class HealthIcon extends FlxSprite
 			final graphic = Paths.image(name, allowGPU);
 			final iSize:Int = Math.floor(graphic.width / graphic.height); // Instead of using Math.round(), i using Math.floor() for prevent icon that width > 300 but width < 450 and not 3 frame icon, it give look like shit that we see.
 			loadGraphic(graphic, true, Math.floor(graphic.width / iSize), Math.floor(graphic.height));
-			iconOffsets[0] = (width - height) / iSize;
-			iconOffsets[1] = (height - height) / iSize;
+			iconOffsets[0] = (width - (width < 450 ? (width / 2) : 150)) / iSize;
+			iconOffsets[1] = (height - 150) / iSize;
 			updateHitbox();
 
 			animation.add(char, [for(i in 0...iSize /*frames.frames.length*/) i], 0, false, isPlayer);
