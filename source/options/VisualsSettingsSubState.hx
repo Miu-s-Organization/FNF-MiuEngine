@@ -135,6 +135,18 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			BOOL);
 		addOption(option);
 		option.onChange = onChangeFPSCounter;
+		
+		var option:Option = new Option('Show Memory Usage',
+			'If unchecked, hides Memory usage.',
+			'showMem',
+			BOOL);
+		addOption(option);
+		
+		var option:Option = new Option('Show Peak Memory Usage',
+			'If unchecked, hides Peak Memory usage.',
+			'showMemPeak',
+			BOOL);
+		addOption(option);
 		#end
 		
 		var option:Option = new Option('Pause Music:',
@@ -173,6 +185,8 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			STRING,
 			['Default', 'New Psych', 'Old Psych', 'Dave and Bambi', 'Golden Apple', 'OS Engine', 'Strident Crisis', 'None']);
 		addOption(option);
+		
+		
 
 		var option:Option = new Option('OPTIMIZATION SETTING (UNFINISHED, W.I.P)',
 			"",
@@ -181,7 +195,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			['', ' ']);
 		addOption(option);
 
-		var option:Option = new Option('Recycle Note',
+		/*var option:Option = new Option('Recycle Note',
 			"(W.I.P) If checked, game run faster because game using FlxTypedGroup's recycle function.\nShoutout to SomeGuyWhoLikesCoding.",
 			'recycleNote',
 			BOOL);
@@ -190,6 +204,27 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 		var option:Option = new Option('Fast Note Spawn',
 			"(W.I.P) If checked, game using NoteGroup's recycle function instead of FlxTypedGroup.\nShoutout to Codename Engine Team and Jordan Santiago (for port to JS Engine and a place that i borrow).",
 			'fastNoteSpawn',
+			BOOL);
+		addOption(option);*/ // kindly broken, don't uncomment, thank!
+
+		var option:Option = new Option('Enable GC',
+			"If checked, then the game will be allowed to garbage collect,\n" + // the desc is borrow from JS Engine!!!
+			"reducing RAM usage I suppose.\n" +
+			"If you experience memory leaks, turn this on, and\n" +
+			"if you experience lag with it on then turn it off.",
+			'enableGC',
+			BOOL);
+		addOption(option);
+
+		var option:Option = new Option('Recycle Rating Popup', // based on HRK EXEX Engine but i write.
+			"(W.I.P) If checked, rating popup doesn't make game slower.",
+			'recycleRating',
+			BOOL);
+		addOption(option);
+
+		var option:Option = new Option('Don\'t Rating Popup If Botplay',
+			"If unchecked, the rating with be popup even you enable Botplay.",
+			'dontRatingPopupIfBotplay',
 			BOOL);
 		addOption(option);
 

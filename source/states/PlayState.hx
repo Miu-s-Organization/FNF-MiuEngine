@@ -252,6 +252,7 @@ class PlayState extends MusicBeatState
 	{
 		//trace('Playback Rate: ' + playbackRate);
 		Paths.clearStoredMemory();
+		cpp.vm.Gc.enable(ClientPrefs.data.enableGC);
 		if(nextReloadAll)
 		{
 			Paths.clearUnusedMemory();
@@ -2590,7 +2591,7 @@ class PlayState extends MusicBeatState
 		}
 
 		var placement:Float = FlxG.width * 0.35;
-		var rating:FlxSprite = new FlxSprite();
+		var rating:FlxSprite = ClientPrefs.data.recycleRating ? comboGroup.recycle(FlxSprite) : new FlxSprite();
 		var score:Int = 350;
 
 		//tryna do MS based judgment due to popular demand
@@ -2626,8 +2627,8 @@ class PlayState extends MusicBeatState
 			antialias = !isPixelStage;
 		}
 
-		if (!cpuControlled) {
-		rating.loadGraphic(Paths.image(uiPrefix + daRating.image + uiPostfix));
+		if (!cpuControlled && !ClientPrefs.data.dontRatingPopupIfBotplay) {
+		rating.loadGraphic(Paths.image(uiPrefix + (!cpuControlled ? daRating.image : 'sick') + uiPostfix));
 		rating.screenCenter();
 		rating.x = placement - 40;
 		rating.y -= 60;
@@ -2639,7 +2640,7 @@ class PlayState extends MusicBeatState
 		rating.y -= ClientPrefs.data.comboOffset[1];
 		rating.antialiasing = antialias;
 
-		var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(uiPrefix + 'combo' + uiPostfix));
+		var comboSpr:FlxSprite = (ClientPrefs.data.recycleRating ? comboGroup.recycle(FlxSprite) : new FlxSprite()).loadGraphic(Paths.image(uiPrefix + 'combo' + uiPostfix));
 		comboSpr.screenCenter();
 		comboSpr.x = placement;
 		comboSpr.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
@@ -2650,7 +2651,7 @@ class PlayState extends MusicBeatState
 		comboSpr.antialiasing = antialias;
 		comboSpr.y += 60;
 		comboSpr.velocity.x += FlxG.random.int(1, 10) * playbackRate;
-		comboGroup.add(rating);
+		if(!ClientPrefs.data.recycleRating) comboGroup.add(rating);
 
 		if (!PlayState.isPixelStage)
 		{
@@ -2668,13 +2669,14 @@ class PlayState extends MusicBeatState
 
 		var daLoop:Int = 0;
 		var xThing:Float = 0;
-		if (showCombo)
-			comboGroup.add(comboSpr);
+		if (showCombo) {
+			if(!ClientPrefs.data.recycleRating) comboGroup.add(comboSpr);
+		}
 		
 		var separatedScore:String = Std.string(combo).lpad('0', 3);
 		for (i in 0...separatedScore.length)
 		{
-			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(uiPrefix + 'num' + Std.parseInt(separatedScore.charAt(i)) + uiPostfix));
+			var numScore:FlxSprite = (ClientPrefs.data.recycleRating ? comboGroup.recycle(FlxSprite) : new FlxSprite()).loadGraphic(Paths.image(uiPrefix + 'num' + Std.parseInt(separatedScore.charAt(i)) + uiPostfix));
 			numScore.screenCenter();
 			numScore.x = placement + (43 * daLoop) - 90 + ClientPrefs.data.comboOffset[2];
 			numScore.y += 80 - ClientPrefs.data.comboOffset[3];
@@ -2686,12 +2688,13 @@ class PlayState extends MusicBeatState
 			numScore.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
 			numScore.velocity.y -= FlxG.random.int(140, 160) * playbackRate;
 			numScore.velocity.x = FlxG.random.float(-5, 5) * playbackRate;
-			numScore.visible = !ClientPrefs.data.hideHud;
+			numScore.visible = !ClientPrefs.data.hideHud && showComboNum;
 			numScore.antialiasing = antialias;
 
 			//if (combo >= 10 || combo == 0)
-			if(showComboNum)
-				comboGroup.add(numScore);
+			if(showComboNum) {
+				if(!ClientPrefs.data.recycleRating) comboGroup.add(numScore);
+			}
 
 			FlxTween.tween(numScore, {alpha: 0}, 0.2 / playbackRate, {
 				onComplete: function(tween:FlxTween)
@@ -3162,7 +3165,7 @@ class PlayState extends MusicBeatState
 		note.kill();
 		notes.remove(note, true);
 		if (!ClientPrefs.data.recycleNote/* && !doKill*/) note.destroy();
-		note.exists = note.wasGoodHit = note.hitByOpponent = note.tooLate = note.canBeHit = false;
+		note.exists = /*note.wasGoodHit = note.hitByOpponent = note.tooLate = note.canBeHit =*/ false;
 		if (ClientPrefs.data.recycleNote && ClientPrefs.data.fastNoteSpawn) notes.pushToPool(note);
 	}
 

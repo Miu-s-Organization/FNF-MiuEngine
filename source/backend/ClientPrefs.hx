@@ -85,6 +85,9 @@ import states.TitleState;
 	public var showCombo:Bool = false;
 	public var ezSpam:Bool = false;
 	public var iconBounce:String = 'Default';
+	public var enableGC:Bool = false;
+	public var recycleRating:Bool = true;
+	public var dontRatingPopupIfBotplay:Bool = false;
 	
 	public var blank:String = ' '; // useless
 }
