@@ -86,6 +86,18 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 		addOption(option);
 		option.onChange = playNoteSplashes;
 
+		var option:Option = new Option('Note Splash',
+			"If unchecked, hitting \"Sick!\" notes won't show particles.",
+			'noteSplashes',
+			BOOL);
+		addOption(option);
+
+		var option:Option = new Option('Opponent Note Splash',
+			"If checked, opponent note hits will show particles.",
+			'oppNoteSplashes',
+			BOOL);
+		addOption(option);
+
 		var option:Option = new Option('Hide HUD',
 			'If checked, hides most HUD elements.',
 			'hideHud',
@@ -144,7 +156,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 		
 		var option:Option = new Option('Show Peak Memory Usage',
 			'If unchecked, hides Peak Memory usage.',
-			'showMemPeak',
+			'showMemMax',
 			BOOL);
 		addOption(option);
 		#end
@@ -195,7 +207,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			['', ' ']);
 		addOption(option);
 
-		/*var option:Option = new Option('Recycle Note',
+		var option:Option = new Option('Recycle Note',
 			"(W.I.P) If checked, game run faster because game using FlxTypedGroup's recycle function.\nShoutout to SomeGuyWhoLikesCoding.",
 			'recycleNote',
 			BOOL);
@@ -205,7 +217,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			"(W.I.P) If checked, game using NoteGroup's recycle function instead of FlxTypedGroup.\nShoutout to Codename Engine Team and Jordan Santiago (for port to JS Engine and a place that i borrow).",
 			'fastNoteSpawn',
 			BOOL);
-		addOption(option);*/ // kindly broken, don't uncomment, thank!
+		addOption(option); // kindly broken, don't uncomment, thank!
 
 		var option:Option = new Option('Enable GC',
 			"If checked, then the game will be allowed to garbage collect,\n" + // the desc is borrow from JS Engine!!!
