@@ -3054,7 +3054,7 @@ class PlayState extends MusicBeatState
 		if(opponentVocals.length <= 0) vocals.volume = 1;
 		strumPlayAnim(true, Std.int(Math.abs(note.noteData)), Conductor.stepCrochet * 1.25 / 1000 / playbackRate);
 		note.hitByOpponent = true;
-		if(!note.noteSplashData.disabled && !note.isSustainNote) spawnNoteSplashOnNote(note, true);
+		if(!note.noteSplashData.disabled && !note.isSustainNote && ClientPrefs.data.oppNoteSplashes) spawnNoteSplashOnNote(note, true);
 		
 		stagesFunc(function(stage:BaseStage) stage.opponentNoteHit(note));
 		var result:Dynamic = callOnLuas('opponentNoteHit', [notes.members.indexOf(note), Math.abs(note.noteData), note.noteType, note.isSustainNote]);
@@ -3152,7 +3152,7 @@ class PlayState extends MusicBeatState
 			}
 
 			noteMiss(note);
-			if(!note.noteSplashData.disabled && !note.isSustainNote) spawnNoteSplashOnNote(note);
+			if(!note.noteSplashData.disabled && !note.isSustainNote && ClientPrefs.data.noteSplashes) spawnNoteSplashOnNote(note);
 		}
 
 		stagesFunc(function(stage:BaseStage) stage.goodNoteHit(note));
@@ -3170,8 +3170,8 @@ class PlayState extends MusicBeatState
 	}
 
 	public function spawnNoteSplashOnNote(note:Note, ?isDad:Bool = false) {
-		if (note != null) spawnNoteSplash(note,
-			(isDad ? opponentStrums : playerStrums).members[note.noteData]);
+		if (note != null)
+			spawnNoteSplash(note, (isDad ? opponentStrums : playerStrums).members[note.noteData]);
 	}
 
 	public function spawnNoteSplash(note:Note, strum:StrumNote) {
