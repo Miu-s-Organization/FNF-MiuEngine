@@ -14,6 +14,7 @@ haxelib install flixel-addons
 haxelib install flixel-tools
 haxelib install hscript-iris
 haxelib install hscript # for debug
+haxelib install hxcpp-debug-server # for debug
 haxelib install tjson
 haxelib install hxdiscord_rpc
 haxelib install hxvlc
