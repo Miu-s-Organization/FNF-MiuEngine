@@ -83,10 +83,10 @@ class TitleState extends MusicBeatState
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
-		#if CHECK_FOR_UPDATES
+		//#if CHECK_FOR_UPDATES
 		if(ClientPrefs.data.checkForUpdates && !closedState) {
 			trace('checking for update');
-			var http = new haxe.Http("https://raw.githubusercontent.com/ShadowMario/FNF-PsychEngine/main/gitVersion.txt");
+			var http = new haxe.Http("https://raw.githubusercontent.com/Miu-s-Organization/FNF-MiuEngine/main/gitVersion.txt");
 
 			http.onData = function (data:String)
 			{
@@ -105,7 +105,7 @@ class TitleState extends MusicBeatState
 
 			http.request();
 		}
-		#end
+		//#end
 
 		if(!initialized)
 		{

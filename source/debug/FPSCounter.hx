@@ -22,7 +22,7 @@ class FPSCounter extends TextField
 		The current memory usage (WARNING: this is NOT your total program memory usage, rather it shows the garbage collector memory)
 	**/
 	public var memoryMegas(get, never):Float;
-	public var memoryPeaks(default, null):Float = 0.0;
+	public var memoryMax(default, null):Float = 0.0;
 
 	@:noCompletion private var times:Array<Float>;
 
@@ -57,7 +57,7 @@ class FPSCounter extends TextField
 			deltaTimeout += deltaTime;
 			return;
 		}
-		if (memoryMegas > memoryPeaks) memoryPeaks = memoryMegas;
+		memoryMax = Math.max(memoryMegas, memoryMax);
 
 		currentFPS = times.length < FlxG.updateFramerate ? times.length : FlxG.updateFramerate;		
 		updateText();
@@ -67,7 +67,12 @@ class FPSCounter extends TextField
 	public dynamic function updateText():Void { // so people can override it in hscript
 		text = 'FPS: ${currentFPS}';
 		if (ClientPrefs.data.showMem) {
-			text += '\nMEM: ${FlxStringUtil.formatBytes(memoryMegas)}' + (ClientPrefs.data.showMemPeak ? ' / ${FlxStringUtil.formatBytes(memoryPeaks)}' : "");
+			/*
+				i have a question: why the text instead of cancation string loop so why the text after doing cancation string,
+				then it reset to blank? -MiuJoan6952_2
+			*/
+			text += '\nRAM: ${FlxStringUtil.formatBytes(memoryMegas)}'
+			+ (ClientPrefs.data.showMemMax ? ' / ${FlxStringUtil.formatBytes(memoryMax)}' : "");
 		}
 
 		textColor = 0xFFFFFFFF;
