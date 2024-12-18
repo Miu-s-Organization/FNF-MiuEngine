@@ -328,7 +328,7 @@ class PauseSubState extends MusicBeatSubstate
 					PlayState.instance.paused = true; // For lua
 					PlayState.instance.vocals.volume = 0;
 					PlayState.instance.canResync = false;
-					MusicBeatState.switchState(() -> new OptionsState());
+					MusicBeatState.switchState(new OptionsState());
 					if(ClientPrefs.data.pauseMusic != 'None')
 					{
 						FlxG.sound.playMusic(Paths.music(Paths.formatToSongPath(ClientPrefs.data.pauseMusic)), pauseMusic.volume);
@@ -365,9 +365,9 @@ class PauseSubState extends MusicBeatSubstate
 						PlayState.instance.canResync = false;
 						Mods.loadTopMod();
 						if(PlayState.isStoryMode)
-							FlxG.switchState(() -> new StoryMenuState());
+							MusicBeatState.switchState(new StoryMenuState());
 						else
-							FlxG.switchState(() -> new FreeplayState());
+							MusicBeatState.switchState(new FreeplayState());
 
 						//PlayState.cancelMusicFadeTween();
 						FlxG.sound.playMusic(Paths.music('freakyMenu'));
@@ -381,7 +381,7 @@ class PauseSubState extends MusicBeatSubstate
 
 						PlayState.instance.canResync = false;
 						Mods.loadTopMod();
-						FlxG.switchState(() -> new states.MainMenuState());
+						MusicBeatState.switchState(new states.MainMenuState());
 
 						FlxG.sound.playMusic(Paths.music('freakyMenu'));
 						PlayState.changedDifficulty = false;
