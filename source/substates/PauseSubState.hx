@@ -185,6 +185,9 @@ class PauseSubState extends MusicBeatSubstate
 			return;
 		}
 
+		if (menuItems != menuItemsExit && menuItems.contains('Skip Time'))
+			updateSkipTextStuff(); // fix crash game by go to exit menu during charting modes.
+
 		if(FlxG.keys.justPressed.F5)
 		{
 			FlxTransitionableState.skipNextTransIn = true;
@@ -293,15 +296,11 @@ class PauseSubState extends MusicBeatSubstate
 					restartSong();
 					PlayState.chartingMode = false;
 				case 'Skip Time':
-					if(curTime < Conductor.songPosition)
-					{
+					if(curTime < Conductor.songPosition) {
 						PlayState.startOnTime = curTime;
 						restartSong(true);
-					}
-					else
-					{
-						if (curTime != Conductor.songPosition)
-						{
+					} else {
+						if (curTime != Conductor.songPosition) {
 							PlayState.instance.clearNotesBefore(curTime);
 							PlayState.instance.setSongTime(curTime);
 						}
