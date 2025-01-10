@@ -1550,6 +1550,7 @@ class FunkinLua {
 		CustomSubstate.implement(this);
 		ShaderFunctions.implement(this);
 		DeprecatedFunctions.implement(this);
+		BuiltInShaderFunctions.implement(this);
 
 		for (name => func in customFunctions)
 		{
@@ -1637,6 +1638,10 @@ class FunkinLua {
 			return;
 		}
 
+		if (Reflect.isFunction(data)) {
+			Lua_helper.add_callback(lua, variable, data);
+			return;
+		}
 		Convert.toLua(lua, data);
 		Lua.setglobal(lua, variable);
 	}

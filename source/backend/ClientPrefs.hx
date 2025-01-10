@@ -81,13 +81,17 @@ import states.TitleState;
 	public var recycleNote:Bool = false; // this is wip.
 	public var fastNoteSpawn:Bool = false; // wip again.
 	public var showMem:Bool = true;
-	public var showMemPeak:Bool = true;
+	public var showMemMax:Bool = true;
 	public var showCombo:Bool = false;
 	public var ezSpam:Bool = false;
 	public var iconBounce:String = 'Default';
 	public var enableGC:Bool = false;
 	public var recycleRating:Bool = true;
 	public var dontRatingPopupIfBotplay:Bool = false;
+	public var noteSplashes:Bool = true;
+	public var oppNoteSplashes:Bool = false;
+	public var maxSplashLimit:Int = 16;
+	public var rgbFPSCounter:Bool = false;
 	
 	public var blank:String = ' '; // useless
 }

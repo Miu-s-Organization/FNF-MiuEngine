@@ -32,6 +32,9 @@ import substates.GameOverSubstate;
 #if !flash
 import flixel.addons.display.FlxRuntimeShader;
 import openfl.filters.ShaderFilter;
+
+import shaders.Shaders;
+import openfl.filters.BitmapFilter;
 #end
 
 import objects.VideoSprite;
@@ -85,6 +88,12 @@ class PlayState extends MusicBeatState
 		['Sick!', 1], //From 90% to 99%
 		['Perfect!!', 1] //The value on this one isn't used actually, since Perfect is always "1"
 	];
+
+	// built-in shader shit ahhhh
+	public var camGameShaders:Array<ShaderEffect> = [];
+	public var camHUDShaders:Array<ShaderEffect> = [];
+	public var camOtherShaders:Array<ShaderEffect> = [];
+	public var shaderUpdates:Array<Float->Void> = [];
 
 	//event variables
 	private var isCameraOnForcedPos:Bool = false;
@@ -148,7 +157,7 @@ class PlayState extends MusicBeatState
 	public var strumLineNotes:FlxTypedGroup<StrumNote> = new FlxTypedGroup<StrumNote>();
 	public var opponentStrums:FlxTypedGroup<StrumNote> = new FlxTypedGroup<StrumNote>();
 	public var playerStrums:FlxTypedGroup<StrumNote> = new FlxTypedGroup<StrumNote>();
-	public var grpNoteSplashes:FlxTypedGroup<NoteSplash> = new FlxTypedGroup<NoteSplash>();
+	public var grpNoteSplashes:FlxTypedGroup<NoteSplash> = new FlxTypedGroup<NoteSplash>(ClientPrefs.data.maxSplashLimit);
 
 	public var camZooming:Bool = false;
 	public var camZoomingMult:Float = 1;
@@ -180,7 +189,8 @@ class PlayState extends MusicBeatState
 	public var instakillOnMiss:Bool = false;
 	public var cpuControlled:Bool = false;
 	public var practiceMode:Bool = false;
-	public var pressMissDamage:Float = 0.05;
+	public var opponentPlay:Bool = false;
+	public var pressMissDamage:Float = 0.01; //0.05;
 
 	public var botplaySine:Float = 0;
 	public var botplayTxt:FlxText;
@@ -191,6 +201,8 @@ class PlayState extends MusicBeatState
 	public var camGame:FlxCamera;
 	public var camOther:FlxCamera;
 	public var cameraSpeed:Float = 1;
+
+	var notesHitArray:Array<Date> = []; // ik this is useless var but this is mandatory for nps!!!
 
 	public var songScore:Int = 0;
 	public var songHits:Int = 0;
@@ -247,6 +259,36 @@ class PlayState extends MusicBeatState
 	public var startCallback:Void->Void = null;
 	public var endCallback:Void->Void = null;
 	
+	// backwards compatibility for lua shit
+	public var camFollowPos(get, never):flixel.math.FlxPoint;
+	public function get_camFollowPos():flixel.math.FlxPoint {
+		return camGame.scroll;
+	}
+	
+	public var sicks(get, set):Int;
+	public function get_sicks():Int
+		return ratingsData[0].hits;
+	public function set_sicks(v:Int):Int
+		return ratingsData[0].hits = v;
+
+	public var goods(get, set):Int;
+	public function get_goods():Int
+		return ratingsData[1].hits;
+	public function set_goods(v:Int):Int
+		return ratingsData[1].hits = v;
+		
+	public var bads(get, set):Int;
+	public function get_bads():Int
+		return ratingsData[2].hits;
+	public function set_bads(v:Int):Int
+		return ratingsData[2].hits = v;
+		
+	public var shits(get, set):Int;
+	public function get_shits():Int
+		return ratingsData[3].hits;
+	public function set_shits(v:Int):Int 
+		return ratingsData[3].hits = v;
+	
 	public static var nextReloadAll:Bool = false;
 	override public function create()
 	{
@@ -285,6 +327,7 @@ class PlayState extends MusicBeatState
 		instakillOnMiss = ClientPrefs.getGameplaySetting('instakill');
 		practiceMode = ClientPrefs.getGameplaySetting('practice');
 		cpuControlled = ClientPrefs.getGameplaySetting('botplay');
+		opponentPlay = ClientPrefs.getGameplaySetting('opponentplay');
 		guitarHeroSustains = ClientPrefs.data.guitarHeroSustains;
 
 		// var gameCam:FlxCamera = FlxG.camera;
@@ -636,6 +679,15 @@ class PlayState extends MusicBeatState
 
 		if(eventNotes.length < 1) checkEventNote();
 	}
+	
+	public function gameplayChangersUpdate():Void {
+		healthGain = ClientPrefs.getGameplaySetting('healthgain');
+		healthLoss = ClientPrefs.getGameplaySetting('healthloss');
+		instakillOnMiss = ClientPrefs.getGameplaySetting('instakill');
+		practiceMode = ClientPrefs.getGameplaySetting('practice');
+		cpuControlled = ClientPrefs.getGameplaySetting('botplay');
+		opponentPlay = ClientPrefs.getGameplaySetting('opponentplay');
+	}
 
 	function set_songSpeed(value:Float):Float
 	{
@@ -804,7 +856,86 @@ class PlayState extends MusicBeatState
 		#end
 	}
 
-	public function getLuaObject(tag:String):Dynamic
+	public function addShaderToCamera(cam:String,effect:Dynamic) { //STOLE FROM ANDROMEDA // actually i got it from old psych engine
+		switch(cam.toLowerCase()) {
+			case 'camhud' | 'hud':
+				camHUDShaders.push(effect);
+				var newCamEffects:Array<BitmapFilter> = []; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
+				for(i in camHUDShaders) {
+					newCamEffects.push(new ShaderFilter(i.shader));
+				}
+				camHUD.filters = newCamEffects;
+			case 'camother' | 'other':
+				camOtherShaders.push(effect);
+				var newCamEffects:Array<BitmapFilter> = []; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
+				for(i in camOtherShaders) {
+					newCamEffects.push(new ShaderFilter(i.shader));
+				}
+				camOther.filters = newCamEffects;
+			case 'camgame' | 'game':
+				camGameShaders.push(effect);
+				var newCamEffects:Array<BitmapFilter> = []; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
+				for(i in camGameShaders) {
+					newCamEffects.push(new ShaderFilter(i.shader));
+				}
+				camGame.filters = newCamEffects;
+			default:
+				if(variables.exists(cam) && (variables.get(cam) is FlxSprite)) {
+					Reflect.setProperty(variables.get(cam), "shader", effect.shader);
+				} else {
+					var OBJ = Reflect.getProperty(PlayState.instance, cam);
+					Reflect.setProperty(OBJ, "shader", effect.shader);
+				}
+		}
+	}
+
+	public function removeShaderFromCamera(cam:String,effect:ShaderEffect) {
+		switch(cam.toLowerCase()) {
+			case 'camhud' | 'hud':
+				camHUDShaders.remove(effect);
+				var newCamEffects:Array<BitmapFilter> = [];
+				for(i in camHUDShaders) {
+					newCamEffects.push(new ShaderFilter(i.shader));
+				}
+				camHUD.filters = newCamEffects;
+			case 'camother' | 'other':
+				camOtherShaders.remove(effect);
+				var newCamEffects:Array<BitmapFilter> = [];
+				for(i in camOtherShaders) {
+					newCamEffects.push(new ShaderFilter(i.shader));
+				}
+				camOther.filters = newCamEffects;
+			default:
+				if(variables.exists(cam) && (variables.get(cam) is FlxSprite)) {
+					Reflect.setProperty(variables.get(cam), "shader", null);
+				} else {
+					var OBJ = Reflect.getProperty(PlayState.instance, cam);
+					Reflect.setProperty(OBJ, "shader", null);
+				}
+		}
+	}
+	public function clearShaderFromCamera(cam:String) {
+		switch(cam.toLowerCase()) {
+			case 'camhud' | 'hud':
+				camHUDShaders = [];
+				var newCamEffects:Array<BitmapFilter>=[];
+				camHUD.filters = newCamEffects;
+			case 'camother' | 'other':
+				camOtherShaders = [];
+				var newCamEffects:Array<BitmapFilter>=[];
+				camOther.filters = newCamEffects;
+			case 'camgame' | 'game':
+				camGameShaders = [];
+				var newCamEffects:Array<BitmapFilter>=[];
+				camGame.filters = newCamEffects;
+			default:
+				camGameShaders = [];
+				var newCamEffects:Array<BitmapFilter>=[];
+				camGame.filters = newCamEffects;
+		}
+	}
+
+	public function getLuaObject(tag:String, ?text:Bool = true):Dynamic
 		return variables.get(tag);
 
 	function startCharacterPos(char:Character, ?gfCheck:Bool = false) {
@@ -1851,6 +1982,12 @@ class PlayState extends MusicBeatState
 
 		setOnScripts('botPlay', cpuControlled);
 		callOnScripts('onUpdatePost', [elapsed]);
+
+		if (shaderUpdates.length > 0) {
+			for (i in shaderUpdates) {
+				i(elapsed);
+			}
+		}
 	}
 
 	// Health icon updaters
@@ -1886,13 +2023,17 @@ class PlayState extends MusicBeatState
 				iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, thingy)),Std.int(FlxMath.lerp(150, iconP2.height, thingy)));
 				iconP2.updateHitbox();
 				
+			case 'golden apple':
+				iconP1.centerOffsets();
+				iconP2.centerOffsets();
+			
 			case 'os engine':
 				iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, CoolUtil.boundTo(1 - (elapsed * 30), 0, 1))));
 				iconP1.updateHitbox();
 				iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, CoolUtil.boundTo(1 - (elapsed * 30), 0, 1))));
 				iconP2.updateHitbox();
 			
-			case 'Strident Crisis':
+			case 'strident crisis':
 				var mult:Float = FlxMath.lerp(1, iconP1.scale.x, CoolUtil.boundTo(1 - (elapsed * 9), 0, 2));
 				iconP1.scale.set(mult, mult);
 				iconP1.updateHitbox();
@@ -1920,13 +2061,13 @@ class PlayState extends MusicBeatState
 	public dynamic function updateIconsPosition()
 	{
 		final iconOffset:Int = 26;
-		if (ClientPrefs.data.iconBounce != 'Dave And Bambi') {
-			iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
-			iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
-		} else {
+		if (ClientPrefs.data.iconBounce == 'Dave And Bambi') {
 			iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01) - iconOffset);
 			iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (iconP2.width - iconOffset);
+			return;
 		}
+		iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
+		iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
 	}
 
 	var iconsAnimations:Bool = true;
@@ -3054,13 +3195,32 @@ class PlayState extends MusicBeatState
 		if(opponentVocals.length <= 0) vocals.volume = 1;
 		strumPlayAnim(true, Std.int(Math.abs(note.noteData)), Conductor.stepCrochet * 1.25 / 1000 / playbackRate);
 		note.hitByOpponent = true;
-		if(!note.noteSplashData.disabled && !note.isSustainNote) spawnNoteSplashOnNote(note, true);
+		if(!note.noteSplashData.disabled && !note.isSustainNote && ClientPrefs.data.oppNoteSplashes) spawnNoteSplashOnNote(note, true);
 		
 		stagesFunc(function(stage:BaseStage) stage.opponentNoteHit(note));
 		var result:Dynamic = callOnLuas('opponentNoteHit', [notes.members.indexOf(note), Math.abs(note.noteData), note.noteType, note.isSustainNote]);
 		if(result != LuaUtils.Function_Stop && result != LuaUtils.Function_StopHScript && result != LuaUtils.Function_StopAll) callOnHScript('opponentNoteHit', [note]);
 
 		if (!note.isSustainNote) invalidateNote(note);
+	}
+	
+	// nps function shit ig
+	public function getHitWindow(note:Note):Int {
+		final noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.data.ratingOffset);
+		final daRating:Rating = Conductor.judgeNote(ratingsData, noteDiff / playbackRate);
+		return Reflect.field(ClientPrefs.data, daRating.name + 'Window');
+	}
+	
+	public function cleanNPS(note:Note, curTime:Float):Void {
+		while (notesHitArray.length > 0 && notesHitArray[0].getTime() < (curTime - getHitWindow(note))) {
+			notesHitArray.shift();
+		}
+	}
+	
+	public function getNPS(note:Note):Int {
+		final curTime = Conductor.songPosition / 1000;
+		cleanNPS(note, curTime);
+		return Std.int(notesHitArray.length / getHitWindow(note));
 	}
 
 	public function goodNoteHit(note:Note):Void
@@ -3130,6 +3290,9 @@ class PlayState extends MusicBeatState
 				combo++;
 				//if(combo > 9999) combo = 9999;
 				popUpScore(note);
+				final curTime = Conductor.songPosition / 1000;
+				notesHitArray.push(Date.fromTime(curTime));
+				cleanNPS(note, curTime);
 			}
 			var gainHealth:Bool = true; // prevent health gain, *if* sustains are treated as a singular note
 			if (guitarHeroSustains && note.isSustainNote) gainHealth = false;
@@ -3152,7 +3315,7 @@ class PlayState extends MusicBeatState
 			}
 
 			noteMiss(note);
-			if(!note.noteSplashData.disabled && !note.isSustainNote) spawnNoteSplashOnNote(note);
+			if(!note.noteSplashData.disabled && !note.isSustainNote && ClientPrefs.data.noteSplashes) spawnNoteSplashOnNote(note);
 		}
 
 		stagesFunc(function(stage:BaseStage) stage.goodNoteHit(note));
@@ -3170,8 +3333,8 @@ class PlayState extends MusicBeatState
 	}
 
 	public function spawnNoteSplashOnNote(note:Note, ?isDad:Bool = false) {
-		if (note != null) spawnNoteSplash(note,
-			(isDad ? opponentStrums : playerStrums).members[note.noteData]);
+		if (note != null)
+			spawnNoteSplash(note, (isDad ? opponentStrums : playerStrums).members[note.noteData]);
 	}
 
 	public function spawnNoteSplash(note:Note, strum:StrumNote) {

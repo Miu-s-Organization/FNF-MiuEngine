@@ -560,63 +560,73 @@ class Note extends FlxSprite
 	}
 
 	public function setupNoteData(chartNoteData:Note) { // the fast way to copy value from chartNoteData to this here, w/o need copy field each one.
-		var listField = Type.getInstanceFields(Type.getClass(chartNoteData));
-		var varsOnly = listField.filter((v:String) -> {
-			if (Reflect.isFunction(Reflect.getProperty(chartNoteData, v))) return false;
-			return true;
-		});
-		for (i in varsOnly) {
-			Reflect.setProperty(this, i, Reflect.getProperty(chartNoteData, i));
-		}
-		angle = 0;
-		
-		if (isSustainNote && prevNote != null)
-		{
-			alpha = 0.6;
-			multAlpha = 0.6;
-			hitsoundDisabled = true;
-			if(ClientPrefs.data.downScroll) flipY = true;
+		wasGoodHit = hitByOpponent = false; // Don't make an update call of this for the note group
 
+		prevNote = chartNoteData.prevNote;
+		texture = chartNoteData.texture;
+		strumTime = chartNoteData.strumTime;
+		if(!inEditor) strumTime += ClientPrefs.data.noteOffset;
+		noteData = chartNoteData.noteData % 4;
+		noteType = chartNoteData.noteType;
+		animSuffix = chartNoteData.animSuffix;
+		noAnimation = noMissAnimation = chartNoteData.noAnimation;
+		mustPress = chartNoteData.mustPress;
+		gfNote = chartNoteData.gfNote;
+		isSustainNote = chartNoteData.isSustainNote;
+		lowPriority = chartNoteData.lowPriority;
+		hitHealth = chartNoteData.hitHealth;
+		missHealth = chartNoteData.missHealth;
+		hitCausesMiss = chartNoteData.hitCausesMiss;
+		ignoreNote = chartNoteData.ignoreNote;
+		blockHit = chartNoteData.blockHit;
+		multSpeed = chartNoteData.multSpeed;
+
+		if (rgbShader == null)
+			rgbShader = new RGBShaderReference(this, initializeGlobalRGBShader(noteData));
+
+		if (PlayState.isPixelStage)
+		{
+			reloadNote(texture);
+			if (isSustainNote) 
+			{
+				offsetX += 30;
+			}
+		}
+
+		if (!PlayState.isPixelStage) 
+		{
+			setGraphicSize(Std.int(width * 0.7));
+			updateHitbox();
+		}
+
+		if (isSustainNote) {
 			offsetX += width / 2;
 			copyAngle = false;
-
-			animation.play(colArray[noteData % colArray.length] + 'holdend');
-
+			animation.play(colArray[noteData % 4] + (prevNote.isSustainNote ? 'holdend' : 'hold'));
 			updateHitbox();
-
 			offsetX -= width / 2;
-
-			if (PlayState.isPixelStage)
-				offsetX += 30;
-
-			if (prevNote.isSustainNote)
-			{
-				prevNote.animation.play(colArray[prevNote.noteData % colArray.length] + 'hold');
-
-				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.05;
-				if(PlayState.instance != null) prevNote.scale.y *= PlayState.instance.songSpeed;
-
-				if(PlayState.isPixelStage) {
-					prevNote.scale.y *= 1.19;
-					prevNote.scale.y *= (6 / height); //Auto adjust note size
-				}
-				prevNote.updateHitbox();
-				// prevNote.setGraphicSize();
-			}
-
-			if(PlayState.isPixelStage)
-			{
-				scale.y *= PlayState.daPixelZoom;
-				updateHitbox();
-			}
-			earlyHitMult = 0;
-		}
-		else if(!isSustainNote)
-		{
+		} else {
+			animation.play(colArray[noteData % 4] + 'Scroll');
+			if (!copyAngle) copyAngle = true;
+			offsetX = 0; //Juuuust in case we recycle a sustain note to a regular note
 			centerOffsets();
 			centerOrigin();
 		}
-		
+		angle = 0;
+
+		clipRect = null;
+		if (!mustPress) 
+		{
+			visible = ClientPrefs.data.opponentStrums;
+			alpha = ClientPrefs.data.middleScroll ? /*ClientPrefs.data.oppNoteAlpha*/ 0.5 : 1;
+		}
+		else
+		{
+			if (!visible) visible = true;
+			if (alpha != 1) alpha = 1;
+		}
+
+		chartNoteData.nextNote = this;
 		return this;
 	}
 

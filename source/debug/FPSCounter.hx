@@ -6,6 +6,7 @@ import openfl.text.TextFormat;
 import openfl.system.System;
 
 import flixel.util.FlxStringUtil;
+import external.memory.Memory;
 
 /**
 	The FPS class provides an easy-to-use monitor to display
@@ -22,7 +23,8 @@ class FPSCounter extends TextField
 		The current memory usage (WARNING: this is NOT your total program memory usage, rather it shows the garbage collector memory)
 	**/
 	public var memoryMegas(get, never):Float;
-	public var memoryPeaks(default, null):Float = 0.0;
+	public var memoryGC(get, never):Float;
+	public var memoryMax(get, never):Float;
 
 	@:noCompletion private var times:Array<Float>;
 
@@ -45,6 +47,7 @@ class FPSCounter extends TextField
 	}
 
 	var deltaTimeout:Float = 0.0;
+	//var hueColor:Float = 0;
 
 	// Event Handlers
 	private override function __enterFrame(deltaTime:Float):Void
@@ -57,7 +60,7 @@ class FPSCounter extends TextField
 			deltaTimeout += deltaTime;
 			return;
 		}
-		if (memoryMegas > memoryPeaks) memoryPeaks = memoryMegas;
+		//memoryMax = Math.max(memoryMegas, memoryMax);
 
 		currentFPS = times.length < FlxG.updateFramerate ? times.length : FlxG.updateFramerate;		
 		updateText();
@@ -67,14 +70,24 @@ class FPSCounter extends TextField
 	public dynamic function updateText():Void { // so people can override it in hscript
 		text = 'FPS: ${currentFPS}';
 		if (ClientPrefs.data.showMem) {
-			text += '\nMEM: ${FlxStringUtil.formatBytes(memoryMegas)}' + (ClientPrefs.data.showMemPeak ? ' / ${FlxStringUtil.formatBytes(memoryPeaks)}' : "");
+			text += '\nRAM: ${CoolUtil.formatBytes(memoryMegas)}'
+			+ (ClientPrefs.data.enableGC ? ' / ${CoolUtil.formatBytes(memoryGC)}' : '')
+			+ (ClientPrefs.data.showMemMax ? ' / ${CoolUtil.formatBytes(memoryMax)}' : '');
 		}
 
-		textColor = 0xFFFFFFFF;
-		if (currentFPS < FlxG.drawFramerate * 0.5)
-			textColor = 0xFFFF0000;
+		//if (!ClientPrefs.data.rgbFPSCounter) {
+			textColor = 0xFFFFFFFF;
+			if (currentFPS < FlxG.drawFramerate * 0.5)
+				textColor = 0xFFFF0000;
+		//}
 	}
 
 	inline function get_memoryMegas():Float
+		return Memory.getCurrentUsage();
+
+	inline function get_memoryGC():Float
 		return cpp.vm.Gc.memInfo64(cpp.vm.Gc.MEM_INFO_USAGE);
+
+	inline function get_memoryMax():Float
+		return Memory.getPeakUsage();
 }

@@ -3,6 +3,33 @@ package backend;
 import openfl.utils.Assets;
 import lime.utils.Assets as LimeAssets;
 
+#if windows
+@:cppFileCode('
+	#include <stdlib.h>
+	#include <string>
+	#include <chrono>
+	#include <thread>
+	#include <stdio.h>
+	#include <iostream>
+	#include <windows.h>
+')
+#elseif desktop
+@:cppFileCode('
+	#include <stdlib.h>
+	#include <string>
+	#include <chrono>
+	#include <thread>
+	#include <stdio.h>
+	#include <iostream>
+')
+#else
+@:cppFileCode('
+	#include <stdlib.h>
+	#include <string>
+	#include <chrono>
+	#include <thread>
+')
+#end
 class CoolUtil
 {
 	inline public static function quantize(f:Float, snap:Float){
@@ -48,9 +75,10 @@ class CoolUtil
 		return daList;
 	}
 
-	public static function floorDecimal(value:Float, decimals:Int):Float
+	// better function that i modified.
+	public static function floorDecimal(value:Float, decimals:Int = 2):Float
 	{
-		if(decimals < 1)
+		/*if(decimals < 1)
 			return Math.floor(value);
 
 		var tempMult:Float = 1;
@@ -58,7 +86,30 @@ class CoolUtil
 			tempMult *= 10;
 
 		var newValue:Float = Math.floor(value * tempMult);
-		return newValue / tempMult;
+		return newValue / tempMult;*/
+		var per = Math.pow(10, decimals);
+		return Math.ffloor(value * per) / per;
+	}
+
+	static function roundDecimal(value:Float, decimals:Int = 2):Float {
+		var per = Math.pow(10, decimals);
+		return Math.fround(value * per) / per;
+	}
+
+
+	static var sizes:Array<String> = ["Bytes", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+	public static function formatBytes(bytes:Float, decimals:Int = 2):String {
+		if (bytes <= 0)
+			return "0 Bytes";
+			
+		var index:Int = Math.floor(Math.log(bytes) / Math.log(1024));
+		if (index > sizes.length - 1)
+			index = sizes.length - 1;
+		else if (index < 0)
+			index = 0;
+
+		var size:Float = bytes / Math.pow(1024, index);
+		return roundDecimal(size, decimals) + ' ${sizes[index]}';
 	}
 
 	inline public static function dominantColor(sprite:flixel.FlxSprite):Int
@@ -170,4 +221,44 @@ class CoolUtil
 
 	inline public static function clamp(value:Float, min:Float, max:Float):Float // WAIT WHAT???? IT WAS COPY VERSION OF boundTo()?????!?!?!?!?!
 		return boundTo(value, min, max);
+
+	// take from H-Slice (by HRK-EXEX)
+	@:functionCode('
+		unsigned int cnt = std::thread::hardware_concurrency();
+		return cnt;
+	')
+	public static function getThreadCount():Int {
+		return 0;
+	}
+
+
+	#if windows
+	@:functionCode('
+		HWND hWnd = GetActiveWindow();
+        LPCSTR lwDesc = desc.c_str();
+        LPCSTR lwCap = cap.c_str();
+
+        res = MessageBoxA(
+            hWnd,
+            lwDesc,
+            NULL,
+            MB_OK
+        );
+	')
+	static public function sendMsgBox(desc:String = "", cap:String = "", res:Int = 0) // TODO: Linux and macOS (will do soon)
+	{
+		return res;
+	}
+	#end
+
+	public static function showPopUp(message:String, title:String):Void
+	{
+		#if android
+		AndroidTools.showAlertDialog(title, message, {name: "OK", func: null}, null);
+		#elseif windows
+		sendMsgBox(message, title);
+		#else
+		FlxG.stage.window.alert(message, title);
+		#end
+	}
 }

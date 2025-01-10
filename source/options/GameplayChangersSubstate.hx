@@ -7,6 +7,8 @@ import options.Option.OptionType;
 
 class GameplayChangersSubstate extends MusicBeatSubstate
 {
+	public static var inThePauseMenu:Bool = false;
+	
 	private var curSelected:Int = 0;
 	private var optionsArray:Array<Dynamic> = [];
 
@@ -69,6 +71,9 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 		optionsArray.push(new GameplayOption('Instakill on Miss', 'instakill', BOOL, false));
 		optionsArray.push(new GameplayOption('Practice Mode', 'practice', BOOL, false));
 		optionsArray.push(new GameplayOption('Botplay', 'botplay', BOOL, false));
+		
+		// THESE OPTIONS ARE UNFINISHED
+		optionsArray.push(new GameplayOption('Play as Opponent', 'opponentplay', BOOL, false));
 	}
 
 	public function getOptionByName(name:String)
@@ -303,6 +308,9 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 		if(nextAccept > 0) {
 			nextAccept -= 1;
 		}
+		
+		if (states.PlayState.instance != null)
+			states.PlayState.instance.gameplayChangersUpdate();
 		super.update(elapsed);
 	}
 
