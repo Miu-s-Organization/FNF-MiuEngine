@@ -3,6 +3,7 @@ package backend;
 import openfl.utils.Assets;
 import lime.utils.Assets as LimeAssets;
 
+// CREDIT TO HRK_EXEX FOR SOME CODE!
 #if windows
 @:cppFileCode('
 	#include <stdlib.h>

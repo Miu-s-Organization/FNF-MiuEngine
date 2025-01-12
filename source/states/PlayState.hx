@@ -3294,8 +3294,8 @@ class PlayState extends MusicBeatState
 				notesHitArray.push(Date.fromTime(curTime));
 				cleanNPS(note, curTime);
 			}
-			var gainHealth:Bool = true; // prevent health gain, *if* sustains are treated as a singular note
-			if (guitarHeroSustains && note.isSustainNote) gainHealth = false;
+			var gainHealth:Bool = !(guitarHeroSustains && note.isSustainNote); //true; // prevent health gain, *if* sustains are treated as a singular note
+			//if (guitarHeroSustains && note.isSustainNote) gainHealth = false;
 			if (gainHealth) health += note.hitHealth * healthGain;
 
 		}

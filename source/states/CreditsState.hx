@@ -39,7 +39,10 @@ class CreditsState extends MusicBeatState
 
 		var defaultList:Array<Array<String>> = [ //Name - Icon name - Description - Link - BG Color
 			["Miu Engine Team"],
-			["MiuJoan6952_2",      "miujoan6952", "Main Programmer and Head of Miu Engine", "https://www.youtube.com/channel/UCsRJCQjwbKvSV9wYyprbsVA", "FFFFFF"],
+			["MiuJoan6952_2",       "miu",          "Main Programmer and Head of Miu Engine","https://www.youtube.com/channel/UCsRJCQjwbKvSV9wYyprbsVA","FFFFFF"],
+			['Other'],
+			['HRK.EXEX',            'hrk',              'Some code i borrow from H-Slice',                 'https://www.youtube.com/@HRK_EXEX/featured','01F8FF'],
+			['Jordan Santiago',     'jor',				'Some code i borrow from JS Engine',                      'https://twitter.com/JordansTweetsYT','FF9300'],
 			["Psych Engine Team"],
 			["Shadow Mario",		"shadowmario",		"Main Programmer and Head of Psych Engine",					"https://ko-fi.com/shadowmario",	"444444"],
 			["Riveren",				"riveren",			"Main Artist/Animator of Psych Engine",						"https://x.com/riverennn",			"14967B"],
@@ -67,6 +70,8 @@ class CreditsState extends MusicBeatState
 			["evilsk8r",			"evilsk8r",			"Artist of Friday Night Funkin'",							"https://x.com/evilsk8r",			"5ABD4B"],
 			["kawaisprite",			"kawaisprite",		"Composer of Friday Night Funkin'",							"https://x.com/kawaisprite",		"378FC7"],
 			[""],
+			["Miu Engine Discord"],
+			["Join the MiuJoan6952_2's Discord Server!", "discord", "", "https://discord.gg/cQC4G2rTkk", "FFFFFF"],
 			["Psych Engine Discord"],
 			["Join the Psych Ward!", "discord", "", "https://discord.gg/2ka77eMXDv", "5165F6"]
 		];

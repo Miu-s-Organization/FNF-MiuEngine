@@ -108,7 +108,7 @@ jobs:
           name: windowsDebugBuild
           path: export/debug/windows/bin
   buildMac:
-    runs-on: macos-12
+    runs-on: macos-13
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
