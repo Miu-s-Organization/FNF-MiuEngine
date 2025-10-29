@@ -640,7 +640,8 @@ class NotesColorSubState extends MusicBeatSubstate
 			myNotes.add(newNote);
 		}
 
-		bigNote = new Note(0, 0, false, true);
+		bigNote = new Note(0, 0 /*, false, true*/);
+		bigNote.inEditor = true;
 		bigNote.setPosition(250, 325);
 		bigNote.setGraphicSize(250);
 		bigNote.updateHitbox();

@@ -496,7 +496,7 @@ class PlayState extends MusicBeatState
 		#end
 
 		uiGroup = new FlxSpriteGroup();
-		comboGroup = new FlxSpriteGroup();
+		comboGroup = new FlxSpriteGroup(ClientPrefs.data.maxPopUpLimit > 0 ? ClientPrefs.data.maxPopUpLimit : 100);
 		noteGroup = new FlxTypedGroup<FlxBasic>();
 		add(comboGroup);
 		add(uiGroup);
@@ -2061,11 +2061,11 @@ class PlayState extends MusicBeatState
 	public dynamic function updateIconsPosition()
 	{
 		final iconOffset:Int = 26;
-		if (ClientPrefs.data.iconBounce == 'Dave And Bambi') {
+		/*if (ClientPrefs.data.iconBounce == 'Dave And Bambi') {
 			iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01) - iconOffset);
 			iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (iconP2.width - iconOffset);
 			return;
-		}
+		}*/
 		iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
 		iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
 	}
@@ -2715,7 +2715,7 @@ class PlayState extends MusicBeatState
 			Paths.image(uiPrefix + 'num' + i + uiPostfix);
 	}
 
-	private function popUpScore(note:Note = null):Void
+	private function popUpScore(?note:Note):Void
 	{
 		var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.data.ratingOffset);
 		vocals.volume = 1;
@@ -2768,8 +2768,8 @@ class PlayState extends MusicBeatState
 			antialias = !isPixelStage;
 		}
 
-		if (!cpuControlled && !ClientPrefs.data.dontRatingPopupIfBotplay) {
-		rating.loadGraphic(Paths.image(uiPrefix + (!cpuControlled ? daRating.image : 'sick') + uiPostfix));
+		if (!cpuControlled || !ClientPrefs.data.dontRatingPopupIfBotplay) {
+		rating.loadGraphic(Paths.image(uiPrefix + (cpuControlled ? 'sick' : daRating.image) + uiPostfix));
 		rating.screenCenter();
 		rating.x = placement - 40;
 		rating.y -= 60;
@@ -2792,7 +2792,7 @@ class PlayState extends MusicBeatState
 		comboSpr.antialiasing = antialias;
 		comboSpr.y += 60;
 		comboSpr.velocity.x += FlxG.random.int(1, 10) * playbackRate;
-		if(!ClientPrefs.data.recycleRating) comboGroup.add(rating);
+		/*if(!ClientPrefs.data.recycleRating)*/ comboGroup.add(rating);
 
 		if (!PlayState.isPixelStage)
 		{
@@ -2811,7 +2811,7 @@ class PlayState extends MusicBeatState
 		var daLoop:Int = 0;
 		var xThing:Float = 0;
 		if (showCombo) {
-			if(!ClientPrefs.data.recycleRating) comboGroup.add(comboSpr);
+			/*if(!ClientPrefs.data.recycleRating)*/ comboGroup.add(comboSpr);
 		}
 		
 		var separatedScore:String = Std.string(combo).lpad('0', 3);
@@ -3341,7 +3341,7 @@ class PlayState extends MusicBeatState
 		final splash:NoteSplash = grpNoteSplashes.recycle(NoteSplash); // idk if this ok but i hope it fine
 		splash.babyArrow = strum;
 		splash.spawnSplashNote(note);
-		//grpNoteSplashes.add(splash);
+		grpNoteSplashes.add(splash);
 	}
 
 	override function destroy() {

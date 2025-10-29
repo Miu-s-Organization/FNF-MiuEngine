@@ -17,6 +17,8 @@ import openfl.utils.Assets;
 
 import haxe.Json;
 
+import states.editors.ChartingState;
+
 class FreeplayState extends MusicBeatState
 {
 	var songs:Array<SongMetadata> = [];
@@ -436,8 +438,12 @@ class FreeplayState extends MusicBeatState
 				return;
 			}
 
-			LoadingState.prepareToSong();
-			LoadingState.loadAndSwitchState(new PlayState());
+			if (FlxG.keys.pressed.SHIFT) LoadingState.loadAndSwitchState(new ChartingState());
+			else {
+				LoadingState.prepareToSong();
+				LoadingState.loadAndSwitchState(new PlayState());
+			}
+			
 			#if !SHOW_LOADING_SCREEN FlxG.sound.music.stop(); #end
 			stopMusicPlay = true;
 

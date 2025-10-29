@@ -64,6 +64,8 @@ class EditorPlayState extends MusicBeatSubstate
 	var scoreTxt:FlxText;
 	var dataTxt:FlxText;
 	var guitarHeroSustains:Bool = false;
+	
+	var cpuControlled:Bool = false;
 
 	var _noteList:Array<Note>;
 	public function new(noteList:Array<Note>, allVocals:Array<FlxSound>)
@@ -125,7 +127,7 @@ class EditorPlayState extends MusicBeatSubstate
 		scoreTxt.visible = !ClientPrefs.data.hideHud;
 		add(scoreTxt);
 		
-		dataTxt = new FlxText(10, 580, FlxG.width - 20, "Section: 0", 20);
+		dataTxt = new FlxText(10, 560, FlxG.width - 20, "Section: 0", 20);
 		dataTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		dataTxt.scrollFactor.set();
 		dataTxt.borderSize = 1.25;
@@ -165,6 +167,12 @@ class EditorPlayState extends MusicBeatSubstate
 			return;
 		}
 		
+		if (FlxG.keys.justPressed.SIX) {
+			cpuControlled = !cpuControlled;
+		}
+		
+		// TODO: Add code for just press space make game pause and resume
+		
 		if (startingSong)
 		{
 			timerToStart -= elapsed * 1000;
@@ -200,7 +208,10 @@ class EditorPlayState extends MusicBeatSubstate
 			}
 		}
 
-		keysCheck();
+		if (!cpuControlled) {
+			keysCheck();
+		}
+		
 		if(notes.length > 0)
 		{
 			var fakeCrochet:Float = (60 / PlayState.SONG.bpm) * 1000;
@@ -212,6 +223,14 @@ class EditorPlayState extends MusicBeatSubstate
 				var strum:StrumNote = strumGroup.members[daNote.noteData];
 				daNote.followStrumNote(strum, fakeCrochet, songSpeed / playbackRate);
 
+				if (daNote.mustPress)
+				{
+					if (cpuControlled && !daNote.blockHit && daNote.canBeHit && (daNote.isSustainNote || daNote.strumTime <= Conductor.songPosition)) {
+						goodNoteHit(daNote);
+						updateScore(); // need update scoreTxt or it display incorrect
+					}
+				}
+
 				if(!daNote.mustPress && daNote.wasGoodHit && !daNote.hitByOpponent && !daNote.ignoreNote)
 					opponentNoteHit(daNote);
 
@@ -220,7 +239,7 @@ class EditorPlayState extends MusicBeatSubstate
 				// Kill extremely late notes and cause misses
 				if (Conductor.songPosition - daNote.strumTime > noteKillOffset)
 				{
-					if (daNote.mustPress && !daNote.ignoreNote && (daNote.tooLate || !daNote.wasGoodHit))
+					if (daNote.mustPress && !cpuControlled && !daNote.ignoreNote && (daNote.tooLate || !daNote.wasGoodHit))
 						noteMiss(daNote);
 
 					daNote.active = daNote.visible = false;
@@ -232,7 +251,8 @@ class EditorPlayState extends MusicBeatSubstate
 		var time:Float = CoolUtil.floorDecimal((Conductor.songPosition - ClientPrefs.data.noteOffset) / 1000, 1);
 		var songLen:Float = CoolUtil.floorDecimal(songLength / 1000, 1);
 		dataTxt.text = 'Time: $time / $songLen' +
-						'\n\nSection: $curSection' +
+						'\n\nBotplay: ' + (cpuControlled ? 'ON' : 'OFF') +
+						'\nSection: $curSection' +
 						'\nBeat: $curBeat' +
 						'\nStep: $curStep';
 		super.update(elapsed);
@@ -551,7 +571,7 @@ class EditorPlayState extends MusicBeatSubstate
 			if (PlayState.isPixelStage) uiPostfix = '-pixel';
 			antialias = !PlayState.isPixelStage;
 		}
-
+		if (!cpuControlled && !ClientPrefs.data.dontRatingPopupIfBotplay) {
 		rating.loadGraphic(Paths.image(uiPrefix + daRating.image + uiPostfix));
 		rating.screenCenter();
 		rating.x = placement - 40;
@@ -642,6 +662,7 @@ class EditorPlayState extends MusicBeatSubstate
 			},
 			startDelay: Conductor.crochet * 0.002 / playbackRate
 		});
+		}
 	}
 
 	private function onKeyPress(event:KeyboardEvent):Void
@@ -698,6 +719,7 @@ class EditorPlayState extends MusicBeatSubstate
 			}
 
 			goodNoteHit(funnyNote);
+			updateScore(); // need update scoreTxt or it display incorrect
 		}
 
 		//more accurate hit time for the ratings? part 2 (Now that the calculations are done, go back to the time it was before for not causing a note stutter)
@@ -813,12 +835,16 @@ class EditorPlayState extends MusicBeatSubstate
 		if (!note.isSustainNote)
 		{
 			combo++;
-			if(combo > 9999) combo = 9999;
+			//if(combo > 9999) combo = 9999;
 			popUpScore(note);
 		}
-
+		
 		var spr:StrumNote = playerStrums.members[note.noteData];
-		if(spr != null) spr.playAnim('confirm', true);
+		if (spr != null) {
+			spr.playAnim('confirm', true);
+			if (cpuControlled) spr.resetAnim = Conductor.stepCrochet * 1.25 / 1000 / playbackRate;
+		}
+		
 		vocals.volume = 1;
 
 		if (!note.isSustainNote)
@@ -893,6 +919,7 @@ class EditorPlayState extends MusicBeatSubstate
 		grpNoteSplashes.add(splash);
 	}
 
-	function updateScore()
+	function updateScore() {
 		scoreTxt.text = 'Hits: $songHits | Misses: $songMisses';
+	}
 }

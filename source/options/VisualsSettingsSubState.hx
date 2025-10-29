@@ -140,7 +140,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 		option.decimals = 1;
 		addOption(option);
 		
-		#if !mobile
+		//#if !mobile
 		var option:Option = new Option('FPS Counter',
 			'If unchecked, hides FPS Counter.',
 			'showFPS',
@@ -159,7 +159,19 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			'showMemMax',
 			BOOL);
 		addOption(option);
-		#end
+
+		var option:Option = new Option('Show Debug Info',
+			'',
+			'showDebugInfo',
+			BOOL);
+		addOption(option);
+
+		var option:Option = new Option('Enable Rainbow For FPS Counter',
+			'',
+			'rgbFPSCounter',
+			BOOL);
+		addOption(option);
+		//#end
 		
 		var option:Option = new Option('Pause Music:',
 			"What song do you prefer for the Pause Screen?",

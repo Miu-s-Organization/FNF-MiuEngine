@@ -8,6 +8,9 @@ import openfl.system.System;
 import flixel.util.FlxStringUtil;
 import external.memory.Memory;
 
+import flixel.util.FlxColor;
+import backend.SystemStuff;
+
 /**
 	The FPS class provides an easy-to-use monitor to display
 	the current frame rate of an OpenFL project
@@ -46,8 +49,9 @@ class FPSCounter extends TextField
 		times = [];
 	}
 
+	private var timeColor:Float = 0.0;
+
 	var deltaTimeout:Float = 0.0;
-	//var hueColor:Float = 0;
 
 	// Event Handlers
 	private override function __enterFrame(deltaTime:Float):Void
@@ -74,8 +78,17 @@ class FPSCounter extends TextField
 			+ (ClientPrefs.data.enableGC ? ' / ${CoolUtil.formatBytes(memoryGC)}' : '')
 			+ (ClientPrefs.data.showMemMax ? ' / ${CoolUtil.formatBytes(memoryMax)}' : '');
 		}
+		if (ClientPrefs.data.showDebugInfo) {
+			text += '\nHaxe ${SystemStuff.haxeVersion}'
+			+ '\nOpenFL ${SystemStuff.openflVersion}'
+			+ '\nLime ${SystemStuff.limeVersion}'
+			+ '\n${SystemStuff.flixelVersion}';
+		}
 
-		//if (!ClientPrefs.data.rgbFPSCounter) {
+		//if (ClientPrefs.data.rgbFPSCounter) {
+		//	timeColor += (timeColor % 360.0) + (1.0 / (ClientPrefs.data.framerate / 120));
+		//	textColor = cast(FlxColor.fromHSB(timeColor, 1.0, 1.0, 1).rgb, Int);
+		//} else {
 			textColor = 0xFFFFFFFF;
 			if (currentFPS < FlxG.drawFramerate * 0.5)
 				textColor = 0xFFFF0000;

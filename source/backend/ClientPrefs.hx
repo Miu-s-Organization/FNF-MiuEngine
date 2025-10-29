@@ -78,8 +78,8 @@ import states.TitleState;
 	public var loadingScreen:Bool = true;
 	public var language:String = 'en-US';
 
-	public var recycleNote:Bool = false; // this is wip.
-	public var fastNoteSpawn:Bool = false; // wip again.
+	public var recycleNote:Bool = false; // this is very wip.
+	public var fastNoteSpawn:Bool = false; // very wip again.
 	public var showMem:Bool = true;
 	public var showMemMax:Bool = true;
 	public var showCombo:Bool = false;
@@ -91,7 +91,9 @@ import states.TitleState;
 	public var noteSplashes:Bool = true;
 	public var oppNoteSplashes:Bool = false;
 	public var maxSplashLimit:Int = 16;
+	public var maxPopUpLimit:Int = 10;
 	public var rgbFPSCounter:Bool = false;
+	public var showDebugInfo:Bool = false;
 	
 	public var blank:String = ' '; // useless
 }

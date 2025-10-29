@@ -63,5 +63,8 @@ import flixel.group.FlxSpriteGroup;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.addons.transition.FlxTransitionableState;
 
+//FlxGif
+import flxgif.FlxGifSprite;
+
 using StringTools;
 #end

@@ -3702,7 +3702,6 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		btn.text.alignment = LEFT;
 		tab_group.add(btn);
 		
-		final lengOfStr = " (Compressed)".length;
 		btnY += 20;
 		var btn:PsychUIButton = new PsychUIButton(btnX, btnY, ' Save (Compressed)', function()
 		{
@@ -3711,7 +3710,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			upperBox.bg.visible = false;
 
 			saveChart(true, true);
-		}, btnWid + lengOfStr);
+		}, btnWid);
 		btn.text.alignment = LEFT;
 		tab_group.add(btn);
 
@@ -3735,7 +3734,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			upperBox.bg.visible = false;
 
 			saveChart(false, true);
-		}, btnWid + lengOfStr);
+		}, btnWid);
 		btn.text.alignment = LEFT;
 		tab_group.add(btn);
 

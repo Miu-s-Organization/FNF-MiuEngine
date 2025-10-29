@@ -417,18 +417,18 @@ class LuaUtils
 
 	//buncho string stuffs
 	public static function getTweenTypeByString(?type:String = '') {
-		switch(type.toLowerCase().trim())
+		return switch(type.toLowerCase().trim())
 		{
 			case 'backward': return FlxTweenType.BACKWARD;
 			case 'looping'|'loop': return FlxTweenType.LOOPING;
 			case 'persist': return FlxTweenType.PERSIST;
 			case 'pingpong': return FlxTweenType.PINGPONG;
+			default: FlxTweenType.ONESHOT;
 		}
-		return FlxTweenType.ONESHOT;
 	}
 
 	public static function getTweenEaseByString(?ease:String = '') {
-		switch(ease.toLowerCase().trim()) {
+		/*switch(ease.toLowerCase().trim()) {
 			case 'backin': return FlxEase.backIn;
 			case 'backinout': return FlxEase.backInOut;
 			case 'backout': return FlxEase.backOut;
@@ -466,11 +466,14 @@ class LuaUtils
 			case 'smootherstepinout': return FlxEase.smootherStepInOut;
 			case 'smootherstepout': return FlxEase.smootherStepOut;
 		}
-		return FlxEase.linear;
+		return FlxEase.linear;*/
+		if (ease == null) return FlxEase.linear;
+		ease = (ease.toLowerCase().trim()).replace('in', 'In').replace('out', 'Out').replace('step', 'Step');
+		return Reflect.field(FlxEase, ease);
 	}
 
 	public static function blendModeFromString(blend:String):BlendMode {
-		switch(blend.toLowerCase().trim()) {
+		return switch(blend.toLowerCase().trim()) {
 			case 'add': return ADD;
 			case 'alpha': return ALPHA;
 			case 'darken': return DARKEN;
@@ -485,8 +488,8 @@ class LuaUtils
 			case 'screen': return SCREEN;
 			case 'shader': return SHADER;
 			case 'subtract': return SUBTRACT;
+			default: NORMAL;
 		}
-		return NORMAL;
 	}
 	
 	public static function typeToString(type:Int):String {
